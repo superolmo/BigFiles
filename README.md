@@ -16,7 +16,8 @@ Big files are read using a small 100kB per page. No files are kept open. An inte
 - Fix Toolbar icons
 - Add current page number and more statistics about the big file in the status bar
 - Add settings dialog and bigfiles.ini for changing page size
-- Classify type of file open [Text, Binary, ZIP, PDF, etc.] and activate Hex-Editor if it is installed
+- Add classification of file type [Text, Binary, ZIP, PDF, etc.] and activate Hex-Editor if it is installed
+- (Maybe) Change behaviour when moving from page to page in a text file to truncate at \n\r.
 
 ## Helping URLs
 - https://notepad-plus-plus.org/community/category/5/plugin-development
