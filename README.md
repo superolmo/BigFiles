@@ -2,7 +2,8 @@
 Notepad++ Plugin for reading large files
 
 # Compiling
-Solution has been developed in Visual Stusio 2017 with Windows 10 SDK. 
+Solution has been developed in Visual Stusio 2017 with Windows 10 SDK.
+Output file bin64/BigFiles.dll ready to be imported by Notepad++
 
 # Structure
 The plugin is developed based on the Plugin template from Don Ho at https://github.com/npp-plugins/plugintemplate
