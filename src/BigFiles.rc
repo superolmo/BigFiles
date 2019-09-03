@@ -74,14 +74,12 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Icon
+// Bitmap
 //
 
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDI_ICON2               ICON                    "back.ico"
+IDB_BITMAP1             BITMAP                  "back.bmp"
 
-IDI_ICON3               ICON                    "forward.ico"
+IDB_BITMAP2             BITMAP                  "forward.bmp"
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
