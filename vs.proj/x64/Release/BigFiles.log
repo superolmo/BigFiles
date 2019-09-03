@@ -1,0 +1,8 @@
+﻿  BigFiles.cpp
+  PluginDefinition.cpp
+     Creating library BigFiles.lib and object BigFiles.exp
+  Generating code
+  All 450 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  BigFiles.vcxproj -> C:\Users\H232980\Downloads\BigFiles-dev\vs.proj\..\bin64\BigFiles.dll
+          1 file(s) copied.

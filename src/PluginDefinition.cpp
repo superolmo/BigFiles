@@ -49,16 +49,25 @@ int bigfile_length;
 ShortcutKey * AltLeftKey = new ShortcutKey;
 ShortcutKey * AltRightKey = new ShortcutKey;
 wchar_t filename_temp[500];
+wchar_t strMessage[1000];
+char binaryBuffer[5];
+
+struct file_type_structure {
+	std::wstring name;
+	std::string str_pattern;
+	int pattern_length;
+	bool is_Binary;
+} file_types[2];
+
+int file_types_length = 2;
 
 //
 // Initialize your plugin data here
 // It will be called while plugin loading   
 void pluginInit(HANDLE global_npp_handle /*hModule*/)
 {
-	left_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)global_npp_handle, MAKEINTRESOURCE(IDI_ICON2), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));;
-	left_icon->hToolbarIcon = (HICON)::LoadIcon((HINSTANCE)global_npp_handle, MAKEINTRESOURCE(IDI_ICON2));
-	right_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)global_npp_handle,MAKEINTRESOURCE(IDI_ICON3),IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
-	right_icon->hToolbarIcon = (HICON)::LoadIcon((HINSTANCE)global_npp_handle, MAKEINTRESOURCE(IDI_ICON3));
+	left_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)global_npp_handle, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));;
+	right_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)global_npp_handle,MAKEINTRESOURCE(IDB_BITMAP2),IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
 	
 	AltLeftKey->_isAlt = false;
 	AltLeftKey->_isCtrl = true;
@@ -70,9 +79,21 @@ void pluginInit(HANDLE global_npp_handle /*hModule*/)
 	AltRightKey->_key = VK_RIGHT;
 
 	bigfile_length = -1;
-}
 
-#define BIGFILES_DEBUG false
+	// TODO: Add more file types
+	//Load File Types
+	char temp_pattern[] = { 0x50,0x4B,0x03,0x04 };
+	file_types[0].name = TEXT("Zip file");
+	file_types[0].pattern_length = 4;
+	file_types[0].str_pattern = temp_pattern;
+	file_types[0].is_Binary = true;
+
+	sprintf(temp_pattern, "%c%c%c%c", 0x25, 0x50, 0x44, 0x46);
+	file_types[1].name = TEXT("PDF file");
+	file_types[1].pattern_length = 4;
+	file_types[1].str_pattern = temp_pattern;	
+	file_types[1].is_Binary = true;
+}
 
 //
 // Here you can do the clean up, save the parameters (if any) for the next session
@@ -231,7 +252,7 @@ void openBigFile()
 {
 	// TODO: Add a notification that the Buffer has been deleted
 	if (bigfile_length == 9) {
-		::MessageBox(NULL, TEXT("Too Mayn BigFiles Open"), TEXT("BigFiles Plugin"), MB_OK);
+		::MessageBox(NULL, TEXT("Too Many BigFiles Open"), TEXT("BigFiles Plugin"), MB_OK);
 		return;
 	}
 
@@ -260,20 +281,32 @@ void openBigFile()
 		mybigfile_size.seekg(0, mybigfile_size.end);
 		bigfile[bigfile_length].file_size_bytes = mybigfile_size.tellg();
 		mybigfile_size.seekg(0, mybigfile_size.beg);
-		mybigfile_size.close();
+		
 		//Compute number of pages based on page size
 		// TODO: Fix calculation of maximum number of pages
 		bigfile[bigfile_length].page_num_max = (int)(bigfile[bigfile_length].file_size_bytes / (size_t)bigfile[bigfile_length].page_size_bytes);
 		// Find if there are any null characters in the first 1000 bytes. If yes, mark file as binary
-		//TODO: Check that file is not less than 1000 bytes
-		char charBuf;
-		for (int i = 0; i < 1000; i++) {
-			mybigfile_size.get(charBuf);
-			if (charBuf <= 0x07) {
-				bigfile[bigfile_length].is_Binary = true;
-				::MessageBox(NULL, TEXT("File is Binary"), TEXT("BigFiles Plugin"), MB_OK);
-			}
-		}
+		
+		//TODO: Check that file is not less than 10 bytes
+		// Get first 4 bytes of file
+		mybigfile_size.read(binaryBuffer, 4);
+		std::string binaryBuf(binaryBuffer);
+
+		switch (libmagic_alike(binaryBuffer))
+		{
+		case 0:
+			bigfile[bigfile_length].is_Binary = true;
+			::MessageBox(NULL, file_types[0].name.c_str(), TEXT("BigFiles Plugin"), MB_OK);
+			break;
+		case 1:
+			bigfile[bigfile_length].is_Binary = true;
+			::MessageBox(NULL, file_types[1].name.c_str(), TEXT("BigFiles Plugin"), MB_OK);
+			break;
+		default:
+			break;
+		} 
+
+		mybigfile_size.close();
 
 		// For debug maybe show the structure
 		// TODO: Add Debug option in Settings
@@ -288,6 +321,7 @@ void openBigFile()
 		std::string string_buffer(bigfile[bigfile_length].page_size_bytes, '\0');
 		LPSTR pst = &string_buffer[0];
 		myfile.read(&string_buffer[0], bigfile[bigfile_length].page_size_bytes);
+		
 
 		//Save current streampos
 		//bigfile.stream_offset = myfile.tellg();
@@ -299,7 +333,9 @@ void openBigFile()
 
 		// Scintilla control has no Unicode mode, so we use (char *) here
 		::SendMessage(bigfile[bigfile_length].sci_ptr, SCI_SETTEXT, 0, (LPARAM)pst);
-		if (BIGFILES_DEBUG) showDebug();
+#ifdef BIGFILES_DEBUG
+		showDebug();
+#endif	
 	}
 	else
 		// Message users that operation has been cancelled at the dialog box
@@ -342,7 +378,9 @@ void move_backward()
 
 			// Scintilla control has no Unicode mode, so we use (char *) here
 			::SendMessage(bigfile[current_bigfile_index].sci_ptr, SCI_SETTEXT, 0, (LPARAM)pst);
-			if (BIGFILES_DEBUG) showDebug();
+#ifdef BIGFILES_DEBUG
+			showDebug();
+#endif	
 		}
 		else {
 			// Move Scintilla to first character
@@ -385,7 +423,9 @@ void move_forward()
 
 			// Scintilla control has no Unicode mode, so we use (char *) here
 			::SendMessage(bigfile[current_bigfile_index].sci_ptr, SCI_SETTEXT, 0, (LPARAM)pst);
-			if (BIGFILES_DEBUG) showDebug();
+#ifdef BIGFILES_DEBUG
+			showDebug();
+#endif	
 		}
 		else {
 			// Move Scintilla to last character
@@ -399,16 +439,42 @@ void move_forward()
 	}
 }
 
+int libmagic_alike(char binBuf[4])
+{
+	char pattern[5];
+
+	for (int j = 0; j < file_types_length; j++) {
+
+#ifdef BIGFILES_DEBUG
+		//Copy string pattern to local char array
+		memcpy(pattern, file_types[j].str_pattern.c_str(), file_types[j].pattern_length);
+		wsprintf(strMessage, TEXT("%d - Type: %ls - Pattern: %02X-%02X-%02X-%02X | =? %02X-%02X-%02X-%02X"),
+			j, 
+			file_types[j].name.c_str(),
+			pattern[0], pattern[1], pattern[2], pattern[3],
+			binBuf[0], binBuf[1], binBuf[2], binBuf[3]
+		);
+		::MessageBox(NULL, strMessage, TEXT("BigFiles Debug"), MB_OK);
+#endif
+
+		if (memcmp(binBuf, file_types[j].str_pattern.c_str(), file_types[j].pattern_length) == 0)
+		{
+			return j;
+		}
+	}
+	return -1;
+}
+
 void showDebug()
 {
 	wchar_t str_buf[1000];
 	wchar_t bf_str[10][500];
-	wsprintf(str_buf, TEXT("Length = %d\nCurrent BufferID=%d\n\n"), bigfile_length, ::SendMessage(nppData._nppHandle, NPPM_GETCURRENTBUFFERID, 0, 0));
+	wsprintf(strMessage, TEXT("Length = %d\nCurrent BufferID=%d\n\n"), bigfile_length, ::SendMessage(nppData._nppHandle, NPPM_GETCURRENTBUFFERID, 0, 0));
 	for (int i = 0; i <= bigfile_length; i++) {
 		wsprintf(bf_str[0], TEXT("FileName = %s\nBufferID = %d\nPage Number Current = %d\nPage Number Max = %d\n\n"), bigfile[i].filename, bigfile[i].bufferID, bigfile[i].page_num_current, bigfile[i].page_num_max);
-		wcscat(str_buf, bf_str[0]);
+		wcscat(strMessage, bf_str[0]);
 	}
 
-	::MessageBox(NULL, str_buf, TEXT("BigFiles Plugin - Debug"), MB_OK);
+	::MessageBox(NULL, strMessage, TEXT("BigFiles Plugin - Debug"), MB_OK);
 }
 

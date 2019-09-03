@@ -28,6 +28,8 @@
 #include <shobjidl.h> 
 #include <strsafe.h>
 
+//#define BIGFILES_DEBUG
+
 //-------------------------------------//
 //-- STEP 1. DEFINE YOUR PLUGIN NAME --//
 //-------------------------------------//
@@ -86,5 +88,9 @@ int getFileName();
 int getBigFileRecord(int buffer_id);
 void showDebug();
 void closeBufferID(int buffer_ID);
+
+// Try to use regex to figure out the file type
+// TODO: Is it worth to import the libmagic library or better to keep it simple and just add simple checking?
+int libmagic_alike(char binBuf[]);
 
 #endif //PLUGINDEFINITION_H
