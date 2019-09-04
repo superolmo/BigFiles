@@ -5,9 +5,9 @@ bin/
 vs.proj/Debug
 vs.proj/Release
 vs.proj/x64
-vs.proj/NppPluginTemplate.opensdf
-vs.proj/NppPluginTemplate.exp
-vs.proj/NppPluginTemplate.lib
-vs.proj/NppPluginTemplate.vcxproj.user
+vs.proj/BigFiles.opensdf
+vs.proj/BigFiles.exp
+vs.proj/BigFiles.lib
+vs.proj/BigFiles.vcxproj.user
 *.aps
 *.zip
