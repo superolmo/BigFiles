@@ -14,8 +14,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,1,0,0
- PRODUCTVERSION 0,1,0,0
+ FILEVERSION 0,1,1,0
+ PRODUCTVERSION 0,1,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -32,12 +32,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Claudio Olmi claudio.olmi@halliburton.com"
             VALUE "FileDescription", "BigFiles Plugin for Notepad++ to read very large files"
-            VALUE "FileVersion", "0.1"
+            VALUE "FileVersion", "0.1.1.0"
             VALUE "InternalName", "BigFiles.dll"
             VALUE "LegalCopyright", "Copyright 2019 by Claudio Olmi"
             VALUE "OriginalFilename", "BigFiles.dll"
             VALUE "ProductName", "BigFiles Plugin"
-            VALUE "ProductVersion", "0.1"
+            VALUE "ProductVersion", "0.1.1.0"
         END
     END
     BLOCK "VarFileInfo"

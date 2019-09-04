@@ -29,23 +29,24 @@
 #include <strsafe.h>
 
 //#define BIGFILES_DEBUG
+#define PLUGIN_NAME "BigFiles"
+#define PLUGIN_NUMBER_OF_FUNCTIONS 3
+#define PLUGIN_DEFAULT_MESSAGEBOX_TITLE "BigFiles Plugin"
 
-//-------------------------------------//
-//-- STEP 1. DEFINE YOUR PLUGIN NAME --//
-//-------------------------------------//
+//-------- START SETTINGS --------
+//
 // Here define your plugin name
 //
-const TCHAR NPP_PLUGIN_NAME[] = TEXT("BigFiles");
+const TCHAR NPP_PLUGIN_NAME[] = TEXT(PLUGIN_NAME);
 
-//-----------------------------------------------//
-//-- STEP 2. DEFINE YOUR PLUGIN COMMAND NUMBER --//
-//-----------------------------------------------//
 //
 // Here define the number of your plugin commands
 //
-const int nbFunc = 3;
+const int nbFunc = PLUGIN_NUMBER_OF_FUNCTIONS;
 
+//-------- END SETTINGS --------
 
+//--------- START LOADING AND UNLOADING FUNCTIONS ----------------
 //
 // Initialization of your plugin data
 // It will be called while plugin loading
@@ -76,21 +77,41 @@ void commandRegToolbarIcons();
 //
 bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey *sk = NULL, bool check0nInit = false);
 
+//---------- END LOADING AND UNLOADING FUNCTIONS ----------------
 
+// --------- START PLUGIN FUNCTIONS -----------
 //
 // Your plugin command functions
 //
-HWND getCurrentHScintilla();
-void openBigFile();
-void move_backward();
-void move_forward();
-int getFileName();
-int getBigFileRecord(int buffer_id);
-void showDebug();
-void closeBufferID(int buffer_ID);
 
-// Try to use regex to figure out the file type
+// Opens the file dialog window to select the file name to open
+int getFileName();
+// Open a Bigfile
+void openBigFile();
+// Get the handle of Scintilla editor
+HWND getCurrentHScintilla();
+// Copy page_size_bytes to SCintilla tab
+void updateBuffer(int record_index);
+// Move backward in the file (page--)
+void move_backward();
+// Move forward in the file (page++)
+void move_forward();
+// Retrieve current visible buffer record index
+int getBigFileRecordIndex(int buffer_id);
+// Delete buffer record from list. Triggered by Scintilla tab close
+void closeBufferID(int buffer_ID);
+// Open the Debug window
+void showDebug();
+
+// Check the type of file based on the first 4 binary char
 // TODO: Is it worth to import the libmagic library or better to keep it simple and just add simple checking?
-int libmagic_alike(char binBuf[]);
+int libmagic_alike(char binBuf[4]);
+
+// Check if the current user has admin rights
+BOOL IsUserAdmin(VOID);
+
+// Function updates the DOC_TYPE status bar field
+void updateStatusBar(int record_index);
+// --------- END PLUGIN FUNCTIONS -----------
 
 #endif //PLUGINDEFINITION_H

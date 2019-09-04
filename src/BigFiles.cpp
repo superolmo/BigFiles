@@ -72,11 +72,13 @@ extern "C" __declspec(dllexport) void beNotified(SCNotification *notifyCode)
 			commandMenuCleanUp();
 		}
 		break;
+
 		case NPPN_TBMODIFICATION:
 		{
 			commandRegToolbarIcons();
 		}
 		break;
+		
 		case NPPN_FILECLOSED:
 		{
 			//When the FileClosed event happens, the Scintilla Buffer gets closed.
@@ -85,7 +87,17 @@ extern "C" __declspec(dllexport) void beNotified(SCNotification *notifyCode)
 			
 		}
 		break;
-
+		
+		case NPPN_BUFFERACTIVATED:
+		{
+			// This happens when a Scintilla Buffer tab has been activated
+			int record_index = getBigFileRecordIndex((int)notifyCode->nmhdr.idFrom);
+			if (record_index >= 0)
+				updateStatusBar(record_index);
+			
+		}
+		break;
+		
 		default:
 			return;
 	}
