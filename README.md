@@ -27,10 +27,9 @@ Big files are read using a small 100kB per page. No files are kept open. An inte
 2. Plugin must have 3 buttons in the toolbar allowing the user to open a bigfile and moving pages backard and forward
 
 # Future Work
-- Fix Toolbar icons
-- Add current page number and more statistics about the big file in the status bar
+- Add Open BigFile in the ToolBar
 - Add settings dialog and bigfiles.ini for changing page size
-- Add classification of file type [Text, Binary, ZIP, PDF, etc.] and activate Hex-Editor if it is installed
+- Improve classification of file type [Text, Binary, ZIP, PDF, etc.] and activate Hex-Editor if it is installed
 - (Maybe) Change behaviour when moving from page to page in a text file to truncate at \n\r.
 
 ## Helping URLs
