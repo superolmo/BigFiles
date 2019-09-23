@@ -1466,8 +1466,6 @@
 #define _WIN32_WINNT_WIN10              0x0A00
 #define _WIN32_IE_IE100                 0x0A00
 #define _WIN32_IE_IE110                 0x0A00
-#define _WIN32_WINNT                    0x0A00
-#define _WIN32_IE                       0x0A00
 #define LVS_ALIGNMASK                   0x0c00
 #define CS_BYTEALIGNCLIENT              0x1000
 #define HDS_OVERFLOW                    0x1000
