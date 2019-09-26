@@ -81,6 +81,8 @@ IDB_BITMAP1             BITMAP                  "back.bmp"
 
 IDB_BITMAP2             BITMAP                  "forward.bmp"
 
+IDB_BITMAP3             BITMAP                  "open.bmp"
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
