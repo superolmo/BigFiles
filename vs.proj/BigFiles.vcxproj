@@ -37,6 +37,7 @@
   <ItemGroup>
     <Image Include="..\src\back.bmp" />
     <Image Include="..\src\forward.bmp" />
+    <Image Include="..\src\open.bmp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9D04DBD5-E12E-44E0-A683-6F43F21D533B}</ProjectGuid>

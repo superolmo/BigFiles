@@ -1,12 +1,13 @@
 // Microsoft Visual C++ generated resource script.
 //
+#pragma code_page(65001)
+
 #include "resource.h"
 /////////////////////////////////////////////////////////////////////////////
 // English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -14,8 +15,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,1,1,0
- PRODUCTVERSION 0,1,1,0
+ FILEVERSION 0,1,1,1
+ PRODUCTVERSION 0,1,1,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -30,14 +31,14 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "Claudio Olmi claudio.olmi@halliburton.com"
+            VALUE "CompanyName", "Claudio Olmi"
             VALUE "FileDescription", "BigFiles Plugin for Notepad++ to read very large files"
-            VALUE "FileVersion", "0.1.1.0"
+            VALUE "FileVersion", "0.1.1.1"
             VALUE "InternalName", "BigFiles.dll"
             VALUE "LegalCopyright", "Copyright 2019 by Claudio Olmi"
             VALUE "OriginalFilename", "BigFiles.dll"
             VALUE "ProductName", "BigFiles Plugin"
-            VALUE "ProductVersion", "0.1.1.0"
+            VALUE "ProductVersion", "0.1.1.1"
         END
     END
     BLOCK "VarFileInfo"

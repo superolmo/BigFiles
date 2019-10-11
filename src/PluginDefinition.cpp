@@ -74,14 +74,14 @@ void pluginInit(HANDLE global_npp_handle /*hModule*/)
 	right_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)global_npp_handle,MAKEINTRESOURCE(IDB_BITMAP2), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
 	open_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)global_npp_handle, MAKEINTRESOURCE(IDB_BITMAP3), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
 
-	AltLeftKey->_isAlt = false;
-	AltLeftKey->_isCtrl = true;
-	AltLeftKey->_isShift = true;
-	AltRightKey->_isAlt = false;
-	AltRightKey->_isCtrl = true;
-	AltRightKey->_isShift = true;
-	AltLeftKey->_key = VK_LEFT;
-	AltRightKey->_key = VK_RIGHT;
+	AltLeftKey->_isAlt = true;
+	AltLeftKey->_isCtrl = false;
+	AltLeftKey->_isShift = false;
+	AltRightKey->_isAlt = true;
+	AltRightKey->_isCtrl = false;
+	AltRightKey->_isShift = false;
+	AltLeftKey->_key = VK_LEFT; //VK_PRIOR;
+	AltRightKey->_key = VK_RIGHT; //VK_NEXT;
 
 	bigfile_length = -1;
 

@@ -13,3 +13,4 @@ vs.proj/BigFiles.vcxproj.user
 *.ilk
 *.lib
 *.pdb
+*.log

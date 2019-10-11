@@ -1,24 +1,30 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v150\Platforms\Win32\PlatformToolsets\v141_xp\Toolset.targets(39,5): warning MSB8051: Support for targeting Windows XP is deprecated and will not be present in future releases of Visual Studio. Please see https://go.microsoft.com/fwlink/?linkid=2023588 for more information.
-  BigFiles.cpp
   PluginDefinition.cpp
      Creating library BigFiles.lib and object BigFiles.exp
   Generating code
-  Previous IPDB not found, fall back to full compilation.
-  All 446 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  2 of 446 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   BigFiles.vcxproj -> C:\Users\mayu_\Documents\GitHub\BigFiles\Win32\Release\BigFiles.dll
           1 file(s) copied.
   
   7-Zip 19.00 (x64) : Copyright (c) 1999-2018 Igor Pavlov : 2019-02-21
   
+  Open archive: C:\Users\mayu_\Documents\GitHub\BigFiles\Win32\Release\BigFiles.zip
+  --
+  Path = C:\Users\mayu_\Documents\GitHub\BigFiles\Win32\Release\BigFiles.zip
+  Type = zip
+  Physical Size = 120981
+  
   Scanning the drive:
   2 files, 238079 bytes (233 KiB)
   
-  Creating archive: C:\Users\mayu_\Documents\GitHub\BigFiles\Win32\Release\BigFiles.zip
+  Updating archive: C:\Users\mayu_\Documents\GitHub\BigFiles\Win32\Release\BigFiles.zip
   
   Add new data to archive: 2 files, 238079 bytes (233 KiB)
   
   
   Files read from disk: 2
-  Archive size: 120981 bytes (119 KiB)
+  Archive size: 120953 bytes (119 KiB)
   Everything is Ok
