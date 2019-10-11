@@ -31,6 +31,7 @@ NppData nppData;
 // Define the Icon Resources for the Toolbar
 toolbarIcons * left_icon = new toolbarIcons;
 toolbarIcons * right_icon = new toolbarIcons;
+toolbarIcons * open_icon = new toolbarIcons;
 
 // Define the global variables for this plugin
 struct bigfile_struct {
@@ -70,16 +71,17 @@ int file_types_length = 2;
 void pluginInit(HANDLE global_npp_handle /*hModule*/)
 {
 	left_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)global_npp_handle, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));;
-	right_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)global_npp_handle,MAKEINTRESOURCE(IDB_BITMAP2),IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
-	
-	AltLeftKey->_isAlt = false;
-	AltLeftKey->_isCtrl = true;
-	AltLeftKey->_isShift = true;
-	AltRightKey->_isAlt = false;
-	AltRightKey->_isCtrl = true;
-	AltRightKey->_isShift = true;
-	AltLeftKey->_key = VK_LEFT;
-	AltRightKey->_key = VK_RIGHT;
+	right_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)global_npp_handle,MAKEINTRESOURCE(IDB_BITMAP2), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
+	open_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)global_npp_handle, MAKEINTRESOURCE(IDB_BITMAP3), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
+
+	AltLeftKey->_isAlt = true;
+	AltLeftKey->_isCtrl = false;
+	AltLeftKey->_isShift = false;
+	AltRightKey->_isAlt = true;
+	AltRightKey->_isCtrl = false;
+	AltRightKey->_isShift = false;
+	AltLeftKey->_key = VK_LEFT; //VK_PRIOR;
+	AltRightKey->_key = VK_RIGHT; //VK_NEXT;
 
 	bigfile_length = -1;
 
@@ -128,7 +130,13 @@ void commandMenuInit()
 	setCommand(0, TEXT("Open BigFile"), openBigFile, NULL, false);
 	setCommand(1, TEXT("Backward"), move_backward, AltLeftKey, false);
 	setCommand(2, TEXT("Forward"), move_forward, AltRightKey, false);
-
+	// TODO: New Features
+	/*
+	// Search for a string in a big file, move page automatically
+	setCommand(3, TEXT("Search"), search_BigFile, NULL, false);
+	// Open a sequence of files as if it is a single big file, this is used for searching
+	setCommand(4, TEXT("Open BigFile Sequence"), open_BigFile_sequence, NULL, false);
+	*/
 }
 
 //
@@ -146,6 +154,10 @@ void commandMenuCleanUp()
 void commandRegToolbarIcons() {
 	//Add icons in the toolbar
 	::SendMessage(nppData._nppHandle, NPPM_ADDTOOLBARICON, (WPARAM)funcItem[1]._cmdID, (LPARAM)(left_icon));
+
+	//New Feature
+	::SendMessage(nppData._nppHandle, NPPM_ADDTOOLBARICON, (WPARAM)funcItem[0]._cmdID, (LPARAM)(open_icon));
+
 	::SendMessage(nppData._nppHandle, NPPM_ADDTOOLBARICON, (WPARAM)funcItem[2]._cmdID, (LPARAM)(right_icon));
 };
 
