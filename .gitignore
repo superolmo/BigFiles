@@ -5,8 +5,8 @@ vs.proj/BigFiles.opensdf
 vs.proj/BigFiles.exp
 vs.proj/BigFiles.lib
 vs.proj/BigFiles.vcxproj.user
-vs.proj/Release
-vs.proj/x64
+vs.proj/Release/*
+vs.proj/x64/*
 *.aps
 .vs/
 *.ipdb
