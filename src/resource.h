@@ -781,6 +781,7 @@
 #define LANG_DIVEHI                     0x65
 #define IDI_ICON1                       101
 #define IDI_ARROW_LEFT_ICON             101
+#define IDD_FORMVIEW                    101
 #define VK_NUMPAD6                      0x66
 #define IDI_ARROW_RIGHT_ICON            102
 #define VK_NUMPAD7                      0x67
@@ -802,8 +803,10 @@
 #define IDB_BITMAP3                     109
 #define VK_DECIMAL                      0x6E
 #define LANG_LUXEMBOURGISH              0x6e
+#define IDB_BITMAP4                     110
 #define VK_DIVIDE                       0x6F
 #define LANG_GREENLANDIC                0x6f
+#define IDB_BITMAP5                     111
 #define VK_F1                           0x70
 #define LANG_IGBO                       0x70
 #define VK_F2                           0x71
@@ -1244,6 +1247,10 @@
 #define WM_PENWINFIRST                  0x0380
 #define WM_PENWINLAST                   0x038F
 #define WM_DDE_FIRST                    0x03E0
+#define IDC_EDIT1                       1000
+#define IDC_CHECK1                      1001
+#define IDC_BUTTON1                     1002
+#define IDC_BUTTON2                     1003
 #define CF_GDIOBJLAST                   0x03FF
 #define _WIN32_WINNT_NT4                0x0400
 #define _WIN32_IE_IE40                  0x0400
@@ -1585,14 +1592,15 @@
 #define LVS_TYPESTYLEMASK               0xfc00
 #define SPVERSION_MASK                  0x0000FF00
 #define UNICODE_NOCHAR                  0xFFFF
+#define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        110
+#define _APS_NEXT_RESOURCE_VALUE        113
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_CONTROL_VALUE         1004
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

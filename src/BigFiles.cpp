@@ -28,16 +28,20 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD  reasonForCall, LPVOID /*lpReserved*
     {
       case DLL_PROCESS_ATTACH:
         pluginInit(hModule);
+		
         break;
 
       case DLL_PROCESS_DETACH:
         pluginCleanUp();
+		
         break;
 
       case DLL_THREAD_ATTACH:
+		
         break;
 
       case DLL_THREAD_DETACH:
+		
         break;
     }
 
@@ -91,6 +95,7 @@ extern "C" __declspec(dllexport) void beNotified(SCNotification *notifyCode)
 		case NPPN_BUFFERACTIVATED:
 		{
 			// This happens when a Scintilla Buffer tab has been activated
+			// Update the current buffer reference in the BigFiles structure
 			int record_index = getBigFileRecordIndex((int)notifyCode->nmhdr.idFrom);
 			if (record_index >= 0)
 				updateStatusBar(record_index);
