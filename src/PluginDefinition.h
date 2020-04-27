@@ -33,12 +33,6 @@ Used for:
 
 /*
 Used for:
-	
-*/
-//#include <iostream>
-
-/*
-Used for:
 Functions used:
 	std::ifstream
 */
@@ -58,10 +52,19 @@ Functions used:
 /*
 Used for:
 	wsprint
+	StringCchCatW
+	StringCchPrntW
 */
 #include <strsafe.h>
 
-
+/*
+Used for Message Boxes, Debug Window
+Functions used:
+	msgBox
+	msgBox_int
+	showDebug
+*/
+#include "Support.h"
 
 /*
 Used for reading and writing to configuration file
@@ -73,7 +76,7 @@ Function used:
 
 //#define BIGFILES_DEBUG
 #define PLUGIN_NAME "BigFiles"
-#define PLUGIN_NUMBER_OF_FUNCTIONS 5
+#define PLUGIN_NUMBER_OF_FUNCTIONS 7
 #define PLUGIN_DEFAULT_MESSAGEBOX_TITLE "BigFiles Plugin"
 
 //-------- START SETTINGS --------
@@ -143,6 +146,8 @@ struct bigfile_struct {
 	wchar_t filetype_name[20];
 };
 
+void openConfigFile();
+
 // Opens the file dialog window to select the file name to open
 int getFileName();
 bool get_file_stats(bigfile_struct*);
@@ -165,9 +170,6 @@ void move_to_start();
 int getBigFileRecordIndex(int buffer_id);
 // Delete buffer record from list. Triggered by Scintilla tab close
 void closeBufferID(int buffer_ID);
-// Open the Debug window
-void showDebug();
-
 
 // Check if the current user has admin rights
 BOOL IsUserAdmin(VOID);
@@ -175,9 +177,8 @@ BOOL IsUserAdmin(VOID);
 // Function updates the DOC_TYPE status bar field
 void updateStatusBar(int record_index);
 
-void msgBox(wchar_t*);
-void msgBox_int(wchar_t* str, int v);
-
+// Open the Debug window
+void showDebug();
 
 // --------- END PLUGIN FUNCTIONS -----------
 

@@ -19,9 +19,6 @@ Used for:
 class Configuration
 {
 
-	// Holds the fully qualified file name of the configuration file
-	std::wstring confFileNameFull;
-
 	// used for messages
 	wchar_t strMessage[1000];
 
@@ -38,7 +35,10 @@ private:
 	void _getCmdsFromConf(const TCHAR*);
 
 public:
+	// Holds the fully qualified file name of the configuration file
+	std::wstring confFileNameFull;
 
+	// Constructor
 	Configuration(NppData);
 
 	void loadConfFile(NppData nppData);

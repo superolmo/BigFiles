@@ -44,7 +44,6 @@ ShortcutKey* AltRightKey = new ShortcutKey;
 ShortcutKey* AltUpKey = new ShortcutKey;
 ShortcutKey* AltDownKey = new ShortcutKey;
 wchar_t filename_temp[500];
-wchar_t strMessage[1000];
 
 Configuration* bigfiles_config;
 
@@ -118,18 +117,29 @@ void commandMenuInit()
 	setCommand(1, TEXT("Backward"), move_backward, AltLeftKey, false);
 	setCommand(2, TEXT("Forward"), move_forward, AltRightKey, false);
 
-	setCommand(3, TEXT("Move to End"), move_to_end, AltDownKey, false);
-	setCommand(4, TEXT("Move to Start"), move_to_start, AltUpKey, false);
+	setCommand(3, TEXT("Move to Start"), move_to_start, AltUpKey, false);
+	setCommand(4, TEXT("Move to End"), move_to_end, AltDownKey, false);
+
+	// Separator
+	setCommand(5, TEXT("---"), NULL, NULL, false);
+	
+	setCommand(6, TEXT("Change Config"), openConfigFile, NULL, false);
 	// TODO: New Features
 	/*
 	// Search for a string in a big file, move page automatically
-	setCommand(5, TEXT("Search"), search_BigFile, NULL, false);
+	setCommand(7, TEXT("Search"), search_BigFile, NULL, false);
 	// Open a sequence of files as if it is a single big file, this is used for searching
-	setCommand(6, TEXT("Open BigFile Sequence"), open_BigFile_sequence, NULL, false);
+	setCommand(8, TEXT("Open BigFile Sequence"), open_BigFile_sequence, NULL, false);
 	*/
 
 	//Get configuration
 	bigfiles_config = new Configuration(nppData);
+}
+
+// Function tells NOTEPAD++ to open the configuration file
+void openConfigFile()
+{
+	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM) bigfiles_config->confFileNameFull.c_str());
 }
 
 //
@@ -239,11 +249,14 @@ int getFileName()
 }
 /*
 Function open the file in read-only and update the statistics in the file structure
-Returns
+This runs only once when you open the file for the first time
+Returns True or False
 */
 bool get_file_stats(bigfile_struct* bigfile_entry) {
 	// Holding the first 4 character in the file for libmagic
 	char binaryBuffer[5];
+	wchar_t strMessage[1000];
+	long double page_num_calc = 0.0;
 
 	// - Get the file size to calculate the number of pages
 	// Open stream in binary
@@ -257,7 +270,9 @@ bool get_file_stats(bigfile_struct* bigfile_entry) {
 	mybigfile_size.seekg(0, mybigfile_size.beg);
 	//Compute number of pages based on page size
 	// TODO: Fix calculation of maximum number of pages
-	bigfile_entry->page_num_max = (int)(bigfile_entry->file_size_bytes / (size_t)bigfile_entry->page_size_bytes);
+	// - April 4th, 2020 update: It should be fixed!
+	page_num_calc = (long double)bigfile_entry->file_size_bytes / (long double)bigfile_entry->page_size_bytes;
+	bigfile_entry->page_num_max = (int)std::floorl(page_num_calc)+1;
 
 	// Get first 4 bytes of file
 	mybigfile_size.read(binaryBuffer, 4);
@@ -311,9 +326,10 @@ void openBigFile()
 		//Copy the filename from filename_temp to system of records new index
 		wcsncpy(bigfile[bigfile_length].filename, filename_temp, 500);
 		
-		bigfile[bigfile_length].page_num_current = 0;
+		bigfile[bigfile_length].page_num_current = 1;
 		bigfile[bigfile_length].page_num_max = 0;
 		// TODO: Make page_size_bytes an externally changable setting
+		//- April 27, 2020 update: It should now be updatable via bigfile.conf
 		bigfile[bigfile_length].page_size_bytes = bigfiles_config->get_default_page_size_bytes();
 		bigfile[bigfile_length].file_size_bytes = 0;
 		bigfile[bigfile_length].file_size_left = 0;
@@ -399,14 +415,19 @@ HWND getCurrentHScintilla()
 // Returns: VOID
 void updateBuffer(int record_index) 
 {
+	wchar_t strMessage[1000];
+	size_t file_position;
+	size_t cbDest = 1000 * sizeof(wchar_t);
+
 	// Open stream in Read-Only Mode and copy new data to string buffer
 	std::ifstream myfile(bigfile[record_index].filename, std::ios::in);
 	std::string string_buffer(bigfile[record_index].page_size_bytes, '\0');
 	LPSTR pst = &string_buffer[0];
 
-	std::streamoff new_position = bigfile[record_index].page_num_current * bigfile[record_index].page_size_bytes;
+	// Calculate new position
+	file_position = (bigfile[record_index].page_num_current - 1) * (size_t)bigfile[record_index].page_size_bytes;
+	std::streamoff new_position = file_position;
 	myfile.seekg(new_position, std::ios::beg);
-	//myfile.seekg(bigfile[record_index].sp, std::ios::beg);
 
 	myfile.read(&string_buffer[0], bigfile[record_index].page_size_bytes);
 
@@ -421,8 +442,14 @@ void updateBuffer(int record_index)
 
 	// TODO: Change Scintilla Tab Name
 
+	// TODO: Calculate maximum file size before it break this below calculation
+	// - April 27, 2020 update: Should be fixed
 	// Calculate the number of bytes left to read in the file
-	bigfile[record_index].file_size_left = bigfile[record_index].file_size_bytes - (bigfile[record_index].page_size_bytes * bigfile[record_index].page_num_current);
+	size_t max_read = ((size_t)bigfile[record_index].page_size_bytes * (size_t)bigfile[record_index].page_num_current);
+	if (bigfile[record_index].file_size_bytes > max_read) {
+		bigfile[record_index].file_size_left = bigfile[record_index].file_size_bytes - max_read;
+	} else
+		bigfile[record_index].file_size_left = 0;
 
 	// Scintilla control has no Unicode mode
 	// Copy string buffer to the new Scintilla buffer
@@ -461,7 +488,7 @@ void move_backward()
 
 	if (current_bigfile_index > -1) {
 		// If we still have more pages to go, read data, otherwise move Scintilla to first character
-		if (bigfile[current_bigfile_index].page_num_current > 0) {
+		if (bigfile[current_bigfile_index].page_num_current > 1) {
 
 			// We are moving backword, so decrease current page number
 			bigfile[current_bigfile_index].page_num_current--;
@@ -534,9 +561,9 @@ void move_to_start() {
 	if (current_bigfile_index > -1) {
 
 		// If we still have more pages to go, read data, otherwise move Scintilla to last character
-		if (bigfile[current_bigfile_index].page_num_current < bigfile[current_bigfile_index].page_num_max) {
+		if (bigfile[current_bigfile_index].page_num_current != 1) {
 			// We are moving to the end, so set page number to max. Stream pointer is updated automatically upon running updateBuffer
-			bigfile[current_bigfile_index].page_num_current = 0;
+			bigfile[current_bigfile_index].page_num_current = 1;
 			//bigfile[current_bigfile_index].sp = 0;
 			
 			// Update Scintilla buffer
@@ -566,7 +593,6 @@ void move_to_end() {
 	int current_bigfile_index = getBigFileRecordIndex((int)::SendMessage(nppData._nppHandle, NPPM_GETCURRENTBUFFERID, 0, 0));
 
 	if (current_bigfile_index > -1) {
-
 		// If we still have more pages to go, read data, otherwise move Scintilla to last character
 		if (bigfile[current_bigfile_index].page_num_current < bigfile[current_bigfile_index].page_num_max) {
 			// We are moving to the end, so set page number to max. Stream pointer is updated automatically upon running updateBuffer
@@ -574,14 +600,15 @@ void move_to_end() {
 			//bigfile[current_bigfile_index].sp.operator+(bigfile[current_bigfile_index].page_num_current * bigfile[current_bigfile_index].page_size_bytes);
 			// Update Scintilla buffer
 			updateBuffer(current_bigfile_index);
-
 #ifdef BIGFILES_DEBUG
 			showDebug();
 #endif	
 		}
-		// Move Scintilla to last character
-		int lines = (int)::SendMessage(bigfile[current_bigfile_index].sci_ptr, SCI_GETLINECOUNT, 0, 0) - 1;
-		::SendMessage(bigfile[current_bigfile_index].sci_ptr, SCI_GOTOLINE, lines, 0);
+		else {
+			// Move Scintilla to last character
+			int lines = (int)::SendMessage(bigfile[current_bigfile_index].sci_ptr, SCI_GETLINECOUNT, 0, 0) - 1;
+			::SendMessage(bigfile[current_bigfile_index].sci_ptr, SCI_GOTOLINE, lines, 0);
+		}
 	}
 	else {
 		// Current Buffer ID not found or the user is using the shortcut in a scintilla tab not opened by BigFiles
@@ -610,6 +637,7 @@ int getBigFileRecordIndex(int buffer_id)
 // Inputs : integer number of the current Scintilla tab Buffer ID
 // Returns: VOID
 void closeBufferID(int buffer_ID) {
+	size_t cbDest = 500 * sizeof(wchar_t);
 	// Go through the whole system of records
 	for (int i = 0; i <= bigfile_length; i++) {
 		// If the Buffer ID is a match
@@ -618,7 +646,8 @@ void closeBufferID(int buffer_ID) {
 			// I just copy the last (valid and not deleted) system of records item to the index where it needs to be deleted
 			// This leaves garbage in the unused system of records items!
 			bigfile[i].bufferID = bigfile[bigfile_length].bufferID;
-			wcsncpy(bigfile[i].filename, bigfile[bigfile_length].filename,500);
+			StringCchCopyW(bigfile[i].filename, cbDest, bigfile[bigfile_length].filename);
+			//wcsncpy(bigfile[i].filename, bigfile[bigfile_length].filename,500);
 			bigfile[i].file_size_bytes = bigfile[bigfile_length].file_size_bytes;
 			bigfile[i].is_Binary = bigfile[bigfile_length].is_Binary;
 			bigfile[i].page_num_current = bigfile[bigfile_length].page_num_current;
@@ -633,40 +662,6 @@ void closeBufferID(int buffer_ID) {
 	}
 }
 
-void msgBox_int(wchar_t* str, int v) {
-	wsprintf(strMessage, TEXT("%s: %d"), str, v);
-	::MessageBox(NULL, strMessage, TEXT("BigFiles Plugin - Debug"), MB_OK);
-}
-
-void msgBox(wchar_t *str) {
-	wsprintf(strMessage, TEXT("%s"), str);
-	::MessageBox(NULL, strMessage, TEXT("BigFiles Plugin - Debug"), MB_OK);
-}
-
-// Function shows a MessageBox with debug information
-// Inputs : VOID
-// Returns: VOID
-void showDebug()
-{
-	// TODO: Should change MessageBox to integrated dialog box in Notepad++
-	wchar_t str_buf[1000];
-	wchar_t bf_str[10][500];
-	wsprintf(strMessage, TEXT("Length = %d\nCurrent BufferID=%d\n\n"), bigfile_length, ::SendMessage(nppData._nppHandle, NPPM_GETCURRENTBUFFERID, 0, 0));
-	for (int i = 0; i <= bigfile_length; i++) {
-		wsprintf(bf_str[0], TEXT("FileName = %s\nBufferID = %d\nPage Number Current = %d\nPage Number Max = %d\nFileSizeByte = %d\nFileSizeLeft = %d\nFileNameType = %s\n"), 
-			bigfile[i].filename, 
-			bigfile[i].bufferID, 
-			bigfile[i].page_num_current, 
-			bigfile[i].page_num_max,
-			bigfile[i].file_size_bytes,
-			bigfile[i].file_size_left,
-			bigfile[i].filetype_name
-		);
-		wcscat(strMessage, bf_str[0]);
-	}
-	
-	::MessageBox(NULL, strMessage, TEXT("BigFiles Plugin - Debug"), MB_OK);
-}
 
 
 
@@ -708,14 +703,47 @@ Return Value:
 	return(b);
 }
 
+// Function shows a MessageBox with debug information
+// Inputs : VOID
+// Returns: VOID
+void showDebug()
+{
+	// TODO: Should change MessageBox to integrated dialog box in Notepad++
+	wchar_t str_buf[1000];
+	wchar_t strMessage[1000];
+	wchar_t bf_str[500];
+	size_t cbDest = 1000 * sizeof(wchar_t);
+	int i = 0;
+	StringCchPrintfW(strMessage, cbDest, TEXT("Length = %d\nCurrent BufferID=%d\n\n"), bigfile_length, ::SendMessage(nppData._nppHandle, NPPM_GETCURRENTBUFFERID, 0, 0));
+
+	cbDest = 500 * sizeof(wchar_t);
+	StringCchPrintfW(bf_str, cbDest,
+		TEXT("FileName = %s\nBufferID = %d\nPage Number Current = %d\nPage Number Max = %d\nFileSizeByte = %llu\nFileSizeLeft = %llu\nFileNameType = %s\n"), 
+		bigfile[i].filename,
+		bigfile[i].bufferID,
+		bigfile[i].page_num_current,
+		bigfile[i].page_num_max,
+		bigfile[i].file_size_bytes,
+		bigfile[i].file_size_left,
+		bigfile[i].filetype_name
+	);
+	StringCchCatW(strMessage, cbDest, bf_str);
+	//wcscat(strMessage, bf_str);
+
+	::MessageBox(NULL, strMessage, TEXT("BigFiles Plugin - Debug"), MB_OK);
+}
+
+
 // Function updates the DOC_TYPE status bar field
 // Inputs : system of records index
 // Returns: VOID
 void updateStatusBar(int record_index)
 {
-	float file_size_left_kb = (float)bigfile[record_index].file_size_left / 1024;
+	long double file_size_left_kb = 0.0;
+	wchar_t strMessage[1000];
 	size_t cbDest = 1000 * sizeof(wchar_t);
-	LPCTSTR pszFormat = TEXT("BigFile ID: #%d - Bytes Left: %.3f kB - Page: %d/%d");
-	HRESULT hr = StringCbPrintf(strMessage, cbDest, pszFormat, record_index, file_size_left_kb, bigfile[record_index].page_num_current, bigfile[record_index].page_num_max);
+	if (bigfile[record_index].file_size_left > 0)
+		file_size_left_kb = (long double) bigfile[record_index].file_size_left / 1024;
+	HRESULT hr = StringCbPrintfW(strMessage, cbDest, TEXT("BigFile ID: #%d - Bytes Left: %.2lf kB - Page: %d/%d"), record_index, file_size_left_kb, bigfile[record_index].page_num_current, bigfile[record_index].page_num_max);
 	::SendMessage(nppData._nppHandle, NPPM_SETSTATUSBAR, STATUSBAR_DOC_TYPE, reinterpret_cast<LPARAM>(strMessage));
 }

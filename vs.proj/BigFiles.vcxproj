@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Configuration.h" />
+    <ClInclude Include="..\src\FileTracker.h" />
     <ClInclude Include="..\src\libmagic_alike.h" />
     <ClInclude Include="..\src\menuCmdID.h" />
     <ClInclude Include="..\src\Notepad_plus_msgs.h" />
@@ -27,13 +28,16 @@
     <ClInclude Include="..\src\PluginInterface.h" />
     <ClInclude Include="..\src\resource.h" />
     <ClInclude Include="..\src\Scintilla.h" />
+    <ClInclude Include="..\src\Support.h" />
     <ClInclude Include="..\src\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\BigFiles.cpp" />
     <ClCompile Include="..\src\Configuration.cpp" />
+    <ClCompile Include="..\src\FileTracker.cpp" />
     <ClCompile Include="..\src\libmagic_alike.cpp" />
     <ClCompile Include="..\src\PluginDefinition.cpp" />
+    <ClCompile Include="..\src\Support.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\src\BigFiles.rc" />
