@@ -38,6 +38,7 @@
     <ClCompile Include="..\src\libmagic_alike.cpp" />
     <ClCompile Include="..\src\PluginDefinition.cpp" />
     <ClCompile Include="..\src\Support.cpp" />
+    <ClCompile Include="..\src\v3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\src\BigFiles.rc" />

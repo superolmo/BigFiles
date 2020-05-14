@@ -74,7 +74,13 @@ Function used:
 */
 #include "Configuration.h"
 
+#include "FileTracker.h"
+#include <vector>
+
+
 //#define BIGFILES_DEBUG
+
+
 #define PLUGIN_NAME "BigFiles"
 #define PLUGIN_NUMBER_OF_FUNCTIONS 7
 #define PLUGIN_DEFAULT_MESSAGEBOX_TITLE "BigFiles Plugin"
@@ -150,32 +156,33 @@ void openConfigFile();
 
 // Opens the file dialog window to select the file name to open
 int getFileName();
-bool get_file_stats(bigfile_struct*);
+//bool get_file_stats(bigfile_struct*);
 // Open a Bigfile
-void openBigFile();
+//void openBigFile();
 // Get the handle of Scintilla editor
-HWND getCurrentHScintilla();
+//HWND getCurrentHScintilla();
 // Copy page_size_bytes to SCintilla tab
-void updateBuffer(int record_index);
+//void updateBuffer(int record_index);
 // Move backward in the file (page--)
-void move_backward();
+//void move_backward();
 // Move forward in the file (page++)
-void move_forward();
+//void move_forward();
 // Move to the end of the file
-void move_to_end();
+//void move_to_end();
 // Move to the start of the file
-void move_to_start();
+//void move_to_start();
 
 // Retrieve current visible buffer record index
-int getBigFileRecordIndex(int buffer_id);
+//int getBigFileRecordIndex(int buffer_id);
 // Delete buffer record from list. Triggered by Scintilla tab close
-void closeBufferID(int buffer_ID);
+//void closeBufferID(int buffer_ID);
+
+// Function updates the DOC_TYPE status bar field
+//void updateStatusBar(int record_index);
+
 
 // Check if the current user has admin rights
 BOOL IsUserAdmin(VOID);
-
-// Function updates the DOC_TYPE status bar field
-void updateStatusBar(int record_index);
 
 // Open the Debug window
 void showDebug();

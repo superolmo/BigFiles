@@ -6,7 +6,7 @@
 #include "PluginInterface.h"
 #include "resource.h"
 #include "Configuration.h"
-
+#include "menuCmdID.h"
 /*
 Used for:
 Functions used:
@@ -14,11 +14,23 @@ Functions used:
 */
 #include <fstream>
 
-#define PLUGIN_DEFAULT_MESSAGEBOX_TITLE "BigFiles Plugin"
+/*
+Used for:
+	wsprint
+	StringCchCatW
+	StringCchPrntW
+*/
+#include <strsafe.h>
+
+#include "libmagic_alike.h"
 
 class FileTracker {
 
+public:
+	bool get_file_stats();
 	wchar_t filename[500];
+	size_t filename_size = 500 * sizeof(wchar_t);
+
 	int page_num_current;
 	int page_num_max;
 	int page_size_bytes;
@@ -26,34 +38,33 @@ class FileTracker {
 	size_t file_size_left;
 	bool is_Binary;
 	std::streampos sp;	//This is the stream position at the end of the page_size_bytes
-	HWND sci_ptr;
+
 	int bufferID;
 	wchar_t filetype_name[20];
+
+	// Binary Signature
 	char binarySignature[5];
+	std::wstring *binarySignatureName;
 
-	int bigfile_length;
+	// Handles to communicate with Scintilla and NPP
+	HWND scintilla_handle;
+	HWND npp_handle;
 
-private:
-	bool get_file_stats();
-
-public:
-	
 	//Constructor
-	FileTracker();
+	FileTracker(HWND npp_handle, HWND scintilla_handle);
 
 	// Open a Bigfile
-	void openBigFile(wchar_t[], HWND npp_handle, HWND scintilla_handle, Configuration &);
+	void openBigFile(wchar_t[], Configuration&);
 
 	// Move backward in the file (page--)
-	void move_backward();
+	bool move_backward();
 	// Move forward in the file (page++)
-	void move_forward();
+	bool move_forward();
 	// Move to the end of the file
-	void move_to_end();
+	bool move_to_end();
 	// Move to the start of the file
-	void move_to_start();
+	bool move_to_start();
 
-	// Delete buffer record from list. Triggered by Scintilla tab close
-	void closeBufferID(int buffer_ID);
+	void updateBuffer();
 
 };
