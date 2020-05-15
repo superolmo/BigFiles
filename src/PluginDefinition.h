@@ -23,14 +23,66 @@
 //
 #include "PluginInterface.h"
 #include "resource.h"
-#include <iostream>
+
+/*
+Used for:
+	libmagic_alike
+*/
+
+#include "libmagic_alike.h"
+
+/*
+Used for:
+Functions used:
+	std::ifstream
+*/
 #include <fstream>
+
+/*
+Used for opening the Open File Dialog
+Functions used:
+	IFileOpenDialog
+	IID_IFileOpenDialog
+	CLSID_FileOpenDialog
+	IShellItem
+	SIGDN_FILESYSPATH
+*/
 #include <shobjidl.h> 
+
+/*
+Used for:
+	wsprint
+	StringCchCatW
+	StringCchPrntW
+*/
 #include <strsafe.h>
 
+/*
+Used for Message Boxes, Debug Window
+Functions used:
+	msgBox
+	msgBox_int
+	showDebug
+*/
+#include "Support.h"
+
+/*
+Used for reading and writing to configuration file
+Function used:
+	loadConfFile
+	editConf
+*/
+#include "Configuration.h"
+
+#include "FileTracker.h"
+#include <vector>
+
+
 //#define BIGFILES_DEBUG
+
+
 #define PLUGIN_NAME "BigFiles"
-#define PLUGIN_NUMBER_OF_FUNCTIONS 3
+#define PLUGIN_NUMBER_OF_FUNCTIONS 7
 #define PLUGIN_DEFAULT_MESSAGEBOX_TITLE "BigFiles Plugin"
 
 //-------- START SETTINGS --------
@@ -45,6 +97,7 @@ const TCHAR NPP_PLUGIN_NAME[] = TEXT(PLUGIN_NAME);
 const int nbFunc = PLUGIN_NUMBER_OF_FUNCTIONS;
 
 //-------- END SETTINGS --------
+
 
 //--------- START LOADING AND UNLOADING FUNCTIONS ----------------
 //
@@ -79,39 +132,61 @@ bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey 
 
 //---------- END LOADING AND UNLOADING FUNCTIONS ----------------
 
+
 // --------- START PLUGIN FUNCTIONS -----------
 //
 // Your plugin command functions
 //
 
+struct bigfile_struct {
+	wchar_t filename[500];
+	int page_num_current;
+	int page_num_max;
+	int page_size_bytes;
+	size_t file_size_bytes;
+	size_t file_size_left;
+	bool is_Binary;
+	std::streampos sp;	//This is the stream position at the end of the page_size_bytes
+	HWND sci_ptr;
+	int bufferID;
+	wchar_t filetype_name[20];
+};
+
+void openConfigFile();
+
 // Opens the file dialog window to select the file name to open
 int getFileName();
+//bool get_file_stats(bigfile_struct*);
 // Open a Bigfile
-void openBigFile();
+//void openBigFile();
 // Get the handle of Scintilla editor
-HWND getCurrentHScintilla();
+//HWND getCurrentHScintilla();
 // Copy page_size_bytes to SCintilla tab
-void updateBuffer(int record_index);
+//void updateBuffer(int record_index);
 // Move backward in the file (page--)
-void move_backward();
+//void move_backward();
 // Move forward in the file (page++)
-void move_forward();
-// Retrieve current visible buffer record index
-int getBigFileRecordIndex(int buffer_id);
-// Delete buffer record from list. Triggered by Scintilla tab close
-void closeBufferID(int buffer_ID);
-// Open the Debug window
-void showDebug();
+//void move_forward();
+// Move to the end of the file
+//void move_to_end();
+// Move to the start of the file
+//void move_to_start();
 
-// Check the type of file based on the first 4 binary char
-// TODO: Is it worth to import the libmagic library or better to keep it simple and just add simple checking?
-int libmagic_alike(char binBuf[4]);
+// Retrieve current visible buffer record index
+//int getBigFileRecordIndex(int buffer_id);
+// Delete buffer record from list. Triggered by Scintilla tab close
+//void closeBufferID(int buffer_ID);
+
+// Function updates the DOC_TYPE status bar field
+//void updateStatusBar(int record_index);
+
 
 // Check if the current user has admin rights
 BOOL IsUserAdmin(VOID);
 
-// Function updates the DOC_TYPE status bar field
-void updateStatusBar(int record_index);
+// Open the Debug window
+void showDebug();
+
 // --------- END PLUGIN FUNCTIONS -----------
 
 #endif //PLUGINDEFINITION_H

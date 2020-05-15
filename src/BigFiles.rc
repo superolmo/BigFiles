@@ -2,6 +2,7 @@
 //
 #pragma code_page(65001)
 
+#include <windows.h>
 #include "resource.h"
 /////////////////////////////////////////////////////////////////////////////
 // English (United States) resources
@@ -15,8 +16,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,1,1,1
- PRODUCTVERSION 0,1,1,1
+ FILEVERSION 0,1,2,0
+ PRODUCTVERSION 0,1,2,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -33,12 +34,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Claudio Olmi"
             VALUE "FileDescription", "BigFiles Plugin for Notepad++ to read very large files"
-            VALUE "FileVersion", "0.1.1.1"
+            VALUE "FileVersion", "0.1.2.0"
             VALUE "InternalName", "BigFiles.dll"
-            VALUE "LegalCopyright", "Copyright 2019 by Claudio Olmi"
+            VALUE "LegalCopyright", "Copyright 2020 by Claudio Olmi"
             VALUE "OriginalFilename", "BigFiles.dll"
             VALUE "ProductName", "BigFiles Plugin"
-            VALUE "ProductVersion", "0.1.1.1"
+            VALUE "ProductVersion", "0.1.2.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -83,6 +84,58 @@ IDB_BITMAP1             BITMAP                  "back.bmp"
 IDB_BITMAP2             BITMAP                  "forward.bmp"
 
 IDB_BITMAP3             BITMAP                  "open.bmp"
+
+IDB_BITMAP4             BITMAP                  "down.bmp"
+
+IDB_BITMAP5             BITMAP                  "up.bmp"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_FORMVIEW DIALOGEX 0, 0, 261, 154
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    GROUPBOX        "Configuration",IDC_STATIC,14,7,227,69
+    EDITTEXT        IDC_EDIT1,121,22,80,13,ES_RIGHT | ES_AUTOHSCROLL
+    LTEXT           "Default Page Size",IDC_STATIC,25,22,88,15
+    CONTROL         "Warn if Administrator",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,48,187,14
+    PUSHBUTTON      "Save",IDC_BUTTON1,50,102,68,21
+    PUSHBUTTON      "Cancel",IDC_BUTTON2,137,102,68,21
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_FORMVIEW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 254
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 147
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_FORMVIEW AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

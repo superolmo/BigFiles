@@ -19,7 +19,10 @@
 
 extern FuncItem funcItem[nbFunc];
 extern NppData nppData;
-
+extern void updateStatusBar3(FileTracker*);
+extern void closeBufferID3(int buffer_ID);
+extern int getBigFileRecordIndex3(int buffer_id);
+extern std::vector<FileTracker> ftv;
 
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD  reasonForCall, LPVOID /*lpReserved*/)
 {
@@ -28,16 +31,20 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD  reasonForCall, LPVOID /*lpReserved*
     {
       case DLL_PROCESS_ATTACH:
         pluginInit(hModule);
+		
         break;
 
       case DLL_PROCESS_DETACH:
         pluginCleanUp();
+		
         break;
 
       case DLL_THREAD_ATTACH:
+		
         break;
 
       case DLL_THREAD_DETACH:
+		
         break;
     }
 
@@ -83,7 +90,7 @@ extern "C" __declspec(dllexport) void beNotified(SCNotification *notifyCode)
 		{
 			//When the FileClosed event happens, the Scintilla Buffer gets closed.
 			// BigFiles needs to remove the reference to the buffer ID.
-			closeBufferID((int)notifyCode->nmhdr.idFrom);
+			closeBufferID3((int)notifyCode->nmhdr.idFrom);
 			
 		}
 		break;
@@ -91,9 +98,10 @@ extern "C" __declspec(dllexport) void beNotified(SCNotification *notifyCode)
 		case NPPN_BUFFERACTIVATED:
 		{
 			// This happens when a Scintilla Buffer tab has been activated
-			int record_index = getBigFileRecordIndex((int)notifyCode->nmhdr.idFrom);
+			// Update the current buffer reference in the BigFiles structure
+			int record_index = getBigFileRecordIndex3((int)notifyCode->nmhdr.idFrom);
 			if (record_index >= 0)
-				updateStatusBar(record_index);
+				updateStatusBar3(&ftv[record_index]);
 			
 		}
 		break;
