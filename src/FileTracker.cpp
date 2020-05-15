@@ -38,9 +38,11 @@ bool FileTracker::get_file_stats() {
 	
 	if (temp_file != NULL) {
 		this->binarySignatureName = &temp_file->name;
+		this->is_Binary = true;
 	}
 	else {
 		this->binarySignatureName = NULL;
+		this->is_Binary = false;
 	}
 	
 
@@ -63,7 +65,7 @@ void FileTracker::updateBuffer()
 	std::ifstream myfile(this->filename, std::ios::in);
 	std::string string_buffer(this->page_size_bytes, '\0');
 	LPSTR pst = &string_buffer[0];
-
+	
 	// Calculate new position
 	file_position = (this->page_num_current - 1) * (size_t)this->page_size_bytes;
 	std::streamoff new_position = file_position;
@@ -141,6 +143,7 @@ void FileTracker::openBigFile(wchar_t filename_temp[], Configuration& bigfiles_c
 
 	// Get file statistics
 	this->get_file_stats();
+	
 }
 
 /*

@@ -9,80 +9,80 @@ unsigned int file_types_length;
 
 bool libmagic_initialized = FALSE;
 
-void libmagic_init2() {
-	//Add new file type in the vector of file types
-	file_type_structure* file_type = new file_type_structure;
-	file_type->str_pattern = { 0x50, 0x4B, 0x03, 0x04 };
-	file_type->name = TEXT("ZIP");
-	file_type->pattern_length = 4;
-	fts.push_back(*file_type);
-	//delete file_type;
-
-	//Add new file type in the vector of file types
-	//file_type_structure* file_type = new file_type_structure;
-	file_type->str_pattern = { 0x25, 0x50, 0x44, 0x46, 0x2D };
-	file_type->name = TEXT("PDF");
-	file_type->pattern_length = 5;
-	fts.push_back(*file_type);
-	//delete file_type;
-
-	//Add new file type in the vector of file types
-	//file_type_structure* file_type = new file_type_structure;
-	file_type->str_pattern = { 0x4D, 0x5A };
-	file_type->name = TEXT("Executable");
-	file_type->pattern_length = 2;
-	fts.push_back(*file_type);
-	//delete file_type;
-
-	//Add new file type in the vector of file types
-	//file_type_structure* file_type = new file_type_structure;
-	file_type->str_pattern = { 0x00, 0x00, 0x00, 0x18 };
-	file_type->name = TEXT("Video");
-	file_type->pattern_length = 4;
-	fts.push_back(*file_type);
-	delete file_type;
-
-	//Add new file type in the vector of file types
-	//file_type_structure* file_type = new file_type_structure;
-	//file_type->str_pattern = { 0xFF, 0xD8, 0xFF };
-	//file_type->name = TEXT("JPG Image");
-	//file_type->pattern_length = 3;
-	//fts.push_back(*file_type);
-	//delete file_type;
-}
-
-file_type_structure* libmagic_alike2(char binBuf[], unsigned int binBuf_length)
-{
-	char pattern[25];
-
-	if (libmagic_initialized == FALSE) {
-		libmagic_initialize();
-	}
-
-	// TODO: Change integer return value to enum
-
-	// Go througt the whole file type array
-	for (file_type_structure ft_obj : fts) {
-
-#ifdef BIGFILES_DEBUG
-		//Copy string pattern to local char array
-		memcpy(pattern, ft_obj.str_pattern.c_str(), ft_obj.pattern_length);
-		wsprintf(strMessage, TEXT("Type: %ls - Pattern: %02X-%02X-%02X-%02X | =? %02X-%02X-%02X-%02X"),
-			ft_obj.name.c_str(),
-			pattern[0], pattern[1], pattern[2], pattern[3],
-			binBuf[0], binBuf[1], binBuf[2], binBuf[3]
-		);
-		::MessageBox(NULL, strMessage, TEXT("BigFiles Plugin - Debug"), MB_OK);
-#endif
-		// Compare patterns
-		if (memcmp(binBuf, ft_obj.str_pattern.c_str(), ft_obj.pattern_length) == 0)
-		{
-			// If they match stop and return index
-			return &ft_obj;
-		}
-	}
-	return NULL;
-}
+//void libmagic_init2() {
+//	//Add new file type in the vector of file types
+//	file_type_structure* file_type = new file_type_structure;
+//	file_type->str_pattern = { 0x50, 0x4B, 0x03, 0x04 };
+//	file_type->name = TEXT("ZIP");
+//	file_type->pattern_length = 4;
+//	fts.push_back(*file_type);
+//	//delete file_type;
+//
+//	//Add new file type in the vector of file types
+//	//file_type_structure* file_type = new file_type_structure;
+//	file_type->str_pattern = { 0x25, 0x50, 0x44, 0x46, 0x2D };
+//	file_type->name = TEXT("PDF");
+//	file_type->pattern_length = 5;
+//	fts.push_back(*file_type);
+//	//delete file_type;
+//
+//	//Add new file type in the vector of file types
+//	//file_type_structure* file_type = new file_type_structure;
+//	file_type->str_pattern = { 0x4D, 0x5A };
+//	file_type->name = TEXT("Executable");
+//	file_type->pattern_length = 2;
+//	fts.push_back(*file_type);
+//	//delete file_type;
+//
+//	//Add new file type in the vector of file types
+//	//file_type_structure* file_type = new file_type_structure;
+//	file_type->str_pattern = { 0x00, 0x00, 0x00, 0x18 };
+//	file_type->name = TEXT("Video");
+//	file_type->pattern_length = 4;
+//	fts.push_back(*file_type);
+//	delete file_type;
+//
+//	//Add new file type in the vector of file types
+//	//file_type_structure* file_type = new file_type_structure;
+//	//file_type->str_pattern = { 0xFF, 0xD8, 0xFF };
+//	//file_type->name = TEXT("JPG Image");
+//	//file_type->pattern_length = 3;
+//	//fts.push_back(*file_type);
+//	//delete file_type;
+//}
+//
+//file_type_structure* libmagic_alike2(char binBuf[], unsigned int binBuf_length)
+//{
+//	char pattern[25];
+//
+//	if (libmagic_initialized == FALSE) {
+//		libmagic_initialize();
+//	}
+//
+//	// TODO: Change integer return value to enum
+//
+//	// Go througt the whole file type array
+//	for (file_type_structure ft_obj : fts) {
+//
+//#ifdef BIGFILES_DEBUG
+//		//Copy string pattern to local char array
+//		memcpy(pattern, ft_obj.str_pattern.c_str(), ft_obj.pattern_length);
+//		wsprintf(strMessage, TEXT("Type: %ls - Pattern: %02X-%02X-%02X-%02X | =? %02X-%02X-%02X-%02X"),
+//			ft_obj.name.c_str(),
+//			pattern[0], pattern[1], pattern[2], pattern[3],
+//			binBuf[0], binBuf[1], binBuf[2], binBuf[3]
+//		);
+//		::MessageBox(NULL, strMessage, TEXT("BigFiles Plugin - Debug"), MB_OK);
+//#endif
+//		// Compare patterns
+//		if (memcmp(binBuf, ft_obj.str_pattern.c_str(), ft_obj.pattern_length) == 0)
+//		{
+//			// If they match stop and return index
+//			return &ft_obj;
+//		}
+//	}
+//	return NULL;
+//}
 
 /*
 Function used to initialize the file type library

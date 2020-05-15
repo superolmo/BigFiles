@@ -40,13 +40,22 @@ void openBigFile3() {
 
 	// Get the file name from the Windows Dialog Box
 	if (getFileName()) {
-		FileTracker* ft1 = new FileTracker(nppData._nppHandle, nppData._scintillaMainHandle);
+
+		// Get the current scintilla
+		int which = -1;
+		::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&which);
+		if (which == -1)
+			return;
+		HWND curScintilla = (which == 0) ? nppData._scintillaMainHandle : nppData._scintillaSecondHandle;
+
+		FileTracker* ft1 = new FileTracker(nppData._nppHandle, curScintilla);
 		ft1->openBigFile(filename_temp, *bigfiles_config);
 		ft1->updateBuffer();
+		
 		updateStatusBar3(ft1);
 
 		ftv.push_back(*ft1);
-
+		
 		// check file type
 		if (ft1->binarySignatureName != NULL) {
 			::MessageBox(NULL, ft1->binarySignatureName->c_str(), TEXT(PLUGIN_DEFAULT_MESSAGEBOX_TITLE), MB_OK);
@@ -159,7 +168,7 @@ void updateStatusBar3(FileTracker* ft_obj) {
 	else {
 		HRESULT hr = StringCbPrintfW(strMessage, cbDest,
 			TEXT("BigFile Type: %s - Page: %d of %d - Bytes Left: %.2lf kB - Name: %s"),
-			default_file_type,
+			TEXT("TEXT"),
 			ft_obj->page_num_current,
 			ft_obj->page_num_max,
 			file_size_left_kb,
