@@ -50,7 +50,7 @@ void openBigFile3() {
 
 		FileTracker* ft1 = new FileTracker(nppData._nppHandle, curScintilla);
 		ft1->openBigFile(filename_temp, *bigfiles_config);
-		ft1->updateBuffer();
+		ft1->updateBuffer(true);
 		
 		updateStatusBar3(ft1);
 
@@ -71,7 +71,7 @@ void move_backward3() {
 	int i = getBigFileRecordIndex3((int)::SendMessage(nppData._nppHandle, NPPM_GETCURRENTBUFFERID, 0, 0));
 	if (i != -1) {
 		if (ftv[i].move_backward()) {
-			ftv[i].updateBuffer();
+			ftv[i].updateBuffer(false);
 			updateStatusBar3(&ftv[i]);
 		}
 		else {
@@ -86,7 +86,7 @@ void move_forward3() {
 	int i = getBigFileRecordIndex3((int)::SendMessage(nppData._nppHandle, NPPM_GETCURRENTBUFFERID, 0, 0));
 	if (i != -1) {
 		if (ftv[i].move_forward()) {
-			ftv[i].updateBuffer();
+			ftv[i].updateBuffer(false);
 			updateStatusBar3(&ftv[i]);
 		}
 		else {
@@ -102,7 +102,7 @@ void move_to_start3() {
 	int i = getBigFileRecordIndex3((int)::SendMessage(nppData._nppHandle, NPPM_GETCURRENTBUFFERID, 0, 0));
 	if (i != -1) {
 		if (ftv[i].move_to_start()) {
-			ftv[i].updateBuffer();
+			ftv[i].updateBuffer(false);
 			updateStatusBar3(&ftv[i]);
 		}
 		// Move Scintilla to first character
@@ -115,7 +115,7 @@ void move_to_end3() {
 	int i = getBigFileRecordIndex3((int)::SendMessage(nppData._nppHandle, NPPM_GETCURRENTBUFFERID, 0, 0));
 	if (i != -1) {
 		if (ftv[i].move_to_end()) {
-			ftv[i].updateBuffer();
+			ftv[i].updateBuffer(false);
 			updateStatusBar3(&ftv[i]);
 		}
 		else {

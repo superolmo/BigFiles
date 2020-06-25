@@ -27,7 +27,9 @@ Used for:
 class FileTracker {
 
 public:
-	bool get_file_stats();
+	bool get_file_stats(bool first_time_call);
+
+	// File properties
 	wchar_t filename[500];
 	size_t filename_size = 500 * sizeof(wchar_t);
 
@@ -65,6 +67,7 @@ public:
 	// Move to the start of the file
 	bool move_to_start();
 
-	void updateBuffer();
+	void updateBuffer(bool first_time_call);
 
+	unsigned int find_EndOfLine(const std::string data);
 };

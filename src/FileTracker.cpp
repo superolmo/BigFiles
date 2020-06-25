@@ -10,7 +10,8 @@ FileTracker::FileTracker(HWND npp_handle, HWND scintilla_handle) {
 Function open the file in read-only and update the statistics in the file structure
 Returns
 */
-bool FileTracker::get_file_stats() {
+bool FileTracker::get_file_stats(bool first_time_call = false) {
+
 	// Holding the first 4 character in the file for libmagic
 	char binaryBuffer[5];
 	long double page_num_calc = 0.0;
@@ -18,48 +19,65 @@ bool FileTracker::get_file_stats() {
 	// - Get the file size to calculate the number of pages
 	// Open stream in binary
 	std::ifstream mybigfile_size(this->filename, std::ios::binary);
-	// Position stream pointer at the end
+	// First position stream pointer at the end
 	mybigfile_size.seekg(0, mybigfile_size.end);
-	// Get current position value
+	// and get its position, this is the total file size
 	this->file_size_bytes = mybigfile_size.tellg();
-	this->file_size_left = this->file_size_bytes;
-	// Position stream pointer at the beginning
+	// NEXT STEP IS NOT NECESSARY
+	// Now position stream pointer at the beginning 
 	mybigfile_size.seekg(0, mybigfile_size.beg);
 	//Compute number of pages based on page size
 	page_num_calc = (long double)this->file_size_bytes / (long double)this->page_size_bytes;
 	this->page_num_max = (int)std::floorl(page_num_calc) + 1;
 
-	// Get first 20 bytes of file
-	mybigfile_size.read(this->binarySignature, 20);
-
-	// find if the name of the file signature and get its name
-	file_type_structure* temp_file;
-	temp_file = libmagic_alike(this->binarySignature);
-	
-	if (temp_file != NULL) {
-		this->binarySignatureName = &temp_file->name;
-		this->is_Binary = true;
-	}
-	else {
-		this->binarySignatureName = NULL;
-		this->is_Binary = false;
-	}
-	
-
 	// Close binary stream
 	mybigfile_size.close();
 
+	if (first_time_call) {
+
+		this->file_size_left = this->file_size_bytes;
+
+		// Get first 20 bytes of file
+		mybigfile_size.read(this->binarySignature, 20);
+
+		// find if the name of the file signature and get its name
+		file_type_structure* temp_file;
+		temp_file = libmagic_alike(this->binarySignature);
+
+		if (temp_file != NULL) {
+			this->binarySignatureName = &temp_file->name;
+			this->is_Binary = true;
+		}
+		else {
+			this->binarySignatureName = NULL;
+			this->is_Binary = false;
+		}
+
+	}
+
 	return TRUE;
+}
+
+unsigned int FileTracker::find_EndOfLine(const std::string data) {
+	unsigned int charNum;
+	char newLine[] = {0x0A};
+	charNum = data.find_last_of(newLine);
+	
+	return charNum;
 }
 
 // Function gets a new page_size_bytes of data and updates the current Scintilla tab
 // Inputs : integer with system of records index to update
 // Returns: VOID
-void FileTracker::updateBuffer()
+void FileTracker::updateBuffer(bool first_time_call)
 {
 	wchar_t strMessage[1000];
 	size_t file_position;
 	size_t cbDest = 1000 * sizeof(wchar_t);
+
+	if (first_time_call == false) {
+		this->get_file_stats(false);
+	}
 
 	// Open stream in Read-Only Mode and copy new data to string buffer
 	std::ifstream myfile(this->filename, std::ios::in);
@@ -113,6 +131,15 @@ void FileTracker::updateBuffer()
 	}
 	else
 	{
+		wchar_t strMessage[1000];
+		unsigned int charNum = find_EndOfLine(string_buffer);
+		//unsigned int leftOverChars = 0;
+		//StringCbPrintfW(strMessage, 1000, TEXT("Last Line Feed found at character number:%d"), charNum);
+		//::MessageBox(NULL, strMessage, TEXT("Debug"), MB_OK);
+		//string_buffer.assign(string_buffer, charNum);
+		//leftOverChars = string_buffer.length - charNum;
+		//this->file_size_left += leftOverChars;
+		//string_buffer[charNum] = { 0x00 };
 		::SendMessage(this->scintilla_handle, SCI_SETTEXT, 0, (LPARAM)pst);
 	}
 }
@@ -141,8 +168,8 @@ void FileTracker::openBigFile(wchar_t filename_temp[], Configuration& bigfiles_c
 	// Set stream position to beginning 0
 	this->sp = 0;
 
-	// Get file statistics
-	this->get_file_stats();
+	// Get file statistics - First Time Call
+	this->get_file_stats(true);
 	
 }
 
@@ -227,3 +254,4 @@ bool FileTracker::move_to_end() {
 		return false;
 	}
 };
+
