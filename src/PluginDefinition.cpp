@@ -106,8 +106,12 @@ void pluginInit(HANDLE global_npp_handle /*hModule*/)
 void pluginCleanUp()
 {
 	// This happens when Notepad++ close the main window
-	delete AltLeftKey, AltRightKey, AltUpKey, AltDownKey;
-	delete [] &bigfile;
+	try {
+		delete[] & bigfile;
+	}
+	catch (...) {
+		msgBox(TEXT("BigFiles: An error occured while cleaning up the memory. pluginCleanUp"));
+	}
 }
 
 //
@@ -164,7 +168,12 @@ void commandMenuCleanUp()
 	// This cleanup happens before PlugInCleanUp, but still only happens when we close Notepad++
 
 	// Don't forget to deallocate your shortcut here
-	delete AltLeftKey, AltRightKey, AltDownKey, AltUpKey;
+	try {
+		delete AltLeftKey, AltRightKey, AltDownKey, AltUpKey;
+	}
+	catch (...) {
+		msgBox(TEXT("BigFiles: An error occured while cleaning up the memory. commandMenuCleanUp"));
+	}
 }
 
 // Register Toolbar Icons
