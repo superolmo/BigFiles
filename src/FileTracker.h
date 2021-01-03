@@ -22,6 +22,8 @@ Used for:
 */
 #include <strsafe.h>
 
+#define MAX_SIGNATURE_BYTES 10
+
 #include "libmagic_alike.h"
 
 class FileTracker {
@@ -45,7 +47,7 @@ public:
 	wchar_t filetype_name[20];
 
 	// Binary Signature
-	char binarySignature[5];
+	char binarySignature[MAX_SIGNATURE_BYTES];
 	std::wstring *binarySignatureName;
 
 	// Handles to communicate with Scintilla and NPP

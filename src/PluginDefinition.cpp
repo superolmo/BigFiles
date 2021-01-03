@@ -106,12 +106,7 @@ void pluginInit(HANDLE global_npp_handle /*hModule*/)
 void pluginCleanUp()
 {
 	// This happens when Notepad++ close the main window
-	try {
-		delete[] & bigfile;
-	}
-	catch (...) {
-		msgBox(TEXT("BigFiles: An error occured while cleaning up the memory. pluginCleanUp"));
-	}
+	
 }
 
 //
@@ -157,6 +152,8 @@ void commandMenuInit()
 // Function tells NOTEPAD++ to open the configuration file
 void openConfigFile()
 {
+	// TODO: Add a save function hook to know when Notepad++ saves the file?
+	// or just implement my own dialog box.
 	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM) bigfiles_config->confFileNameFull.c_str());
 }
 
@@ -168,12 +165,7 @@ void commandMenuCleanUp()
 	// This cleanup happens before PlugInCleanUp, but still only happens when we close Notepad++
 
 	// Don't forget to deallocate your shortcut here
-	try {
-		delete AltLeftKey, AltRightKey, AltDownKey, AltUpKey;
-	}
-	catch (...) {
-		msgBox(TEXT("BigFiles: An error occured while cleaning up the memory. commandMenuCleanUp"));
-	}
+	delete AltLeftKey, AltRightKey, AltDownKey, AltUpKey;
 }
 
 // Register Toolbar Icons

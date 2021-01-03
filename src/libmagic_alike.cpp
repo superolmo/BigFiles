@@ -141,7 +141,7 @@ void libmagic_initialize() {
  Returns: pointer to file structure of the corresponding file type
 			-1 if not found
 */
-file_type_structure* libmagic_alike(char binBuf[20])
+file_type_structure* libmagic_alike(char binBuf[], unsigned int signature_max_size)
 {
 	char pattern[20];
 	wchar_t strMessage[1500];
@@ -156,10 +156,11 @@ file_type_structure* libmagic_alike(char binBuf[20])
 	// Go througt the whole file type array
 	for (int j = 0; j < file_types_length; j++) {
 		
-#ifdef BIGFILES_DEBUG
 		//Copy string pattern to local char array
 		memcpy(pattern, file_types[j].str_pattern.c_str(), file_types[j].pattern_length);
 		
+#ifdef DEBUG_LIBMAGIC
+
 		// Write pattern against file header
 		wsprintf(strMessage, TEXT("%d - Type: %ls\n"), j, file_types[j].name.c_str() );
 		strM.append(strMessage);
@@ -171,7 +172,9 @@ file_type_structure* libmagic_alike(char binBuf[20])
 		//binBuf[0], binBuf[1], binBuf[2], binBuf[3], binBuf[4]
 		::MessageBox(NULL, strM.c_str(), TEXT("BigFiles Plugin - Debug"), MB_OK);
 		strM.clear();
+
 #endif
+
 		// Compare patterns
 		if (memcmp(binBuf, file_types[j].str_pattern.c_str(), file_types[j].pattern_length) == 0)
 		{

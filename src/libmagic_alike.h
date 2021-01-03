@@ -21,6 +21,6 @@ void libmagic_initialize();
 Function check the type of a file based on the first 4 binary char, similar to what libmagic does.
 TODO: Is it worth to import the libmagic library or better to keep it simple and just add simple checking?
 */
-file_type_structure* libmagic_alike(char binBuf[20]);
+file_type_structure* libmagic_alike(char binBuf[], unsigned int);
 
 //file_type_structure* libmagic_alike2(char binBuf[], unsigned int binBuf_length);

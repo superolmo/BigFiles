@@ -79,7 +79,7 @@ Function used:
 
 
 //#define BIGFILES_DEBUG
-
+#define DEBUG_LIBMAGIC
 
 #define PLUGIN_NAME "BigFiles"
 #define PLUGIN_NUMBER_OF_FUNCTIONS 7

@@ -30,20 +30,17 @@ bool FileTracker::get_file_stats(bool first_time_call = false) {
 	page_num_calc = (long double)this->file_size_bytes / (long double)this->page_size_bytes;
 	this->page_num_max = (int)std::floorl(page_num_calc) + 1;
 
-	// Close binary stream
-	mybigfile_size.close();
-
 	if (first_time_call) {
 
 		this->file_size_left = this->file_size_bytes;
 
-		// Get first 20 bytes of file
-		mybigfile_size.read(this->binarySignature, 20);
+		// Get first MAX_SIGNATURE_BYTES bytes of file
+		mybigfile_size.read(this->binarySignature, MAX_SIGNATURE_BYTES);
 
 		// find if the name of the file signature and get its name
 		file_type_structure* temp_file;
-		temp_file = libmagic_alike(this->binarySignature);
-
+		temp_file = libmagic_alike(this->binarySignature, MAX_SIGNATURE_BYTES);
+		
 		if (temp_file != NULL) {
 			this->binarySignatureName = &temp_file->name;
 			this->is_Binary = true;
@@ -54,6 +51,9 @@ bool FileTracker::get_file_stats(bool first_time_call = false) {
 		}
 
 	}
+
+	// Close binary stream
+	mybigfile_size.close();
 
 	return TRUE;
 }
