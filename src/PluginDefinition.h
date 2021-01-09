@@ -98,6 +98,7 @@ const int nbFunc = PLUGIN_NUMBER_OF_FUNCTIONS;
 
 //-------- END SETTINGS --------
 
+INT_PTR CALLBACK ConfigurationDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
 
 //--------- START LOADING AND UNLOADING FUNCTIONS ----------------
 //

@@ -23,32 +23,33 @@ extern void updateStatusBar3(FileTracker*);
 extern void closeBufferID3(int buffer_ID);
 extern int getBigFileRecordIndex3(int buffer_id);
 extern std::vector<FileTracker> ftv;
+extern Configuration* bigfiles_config;
 
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD  reasonForCall, LPVOID /*lpReserved*/)
 {
 
-    switch (reasonForCall)
-    {
-      case DLL_PROCESS_ATTACH:
-        pluginInit(hModule);
-		
-        break;
+	switch (reasonForCall)
+	{
+	case DLL_PROCESS_ATTACH:
+		pluginInit(hModule);
+	
+		break;
 
-      case DLL_PROCESS_DETACH:
-        pluginCleanUp();
-		
-        break;
+	case DLL_PROCESS_DETACH:
+		pluginCleanUp();
 
-      case DLL_THREAD_ATTACH:
-		
-        break;
+		break;
 
-      case DLL_THREAD_DETACH:
-		
-        break;
-    }
+	case DLL_THREAD_ATTACH:
 
-    return TRUE;
+		break;
+
+	case DLL_THREAD_DETACH:
+
+		break;
+	}
+
+	return TRUE;
 }
 
 
@@ -63,17 +64,29 @@ extern "C" __declspec(dllexport) const TCHAR * getName()
 	return NPP_PLUGIN_NAME;
 }
 
-extern "C" __declspec(dllexport) FuncItem * getFuncsArray(int *nbF)
+extern "C" __declspec(dllexport) FuncItem * getFuncsArray(int* nbF)
 {
 	*nbF = nbFunc;
 	return funcItem;
 }
 
 
-extern "C" __declspec(dllexport) void beNotified(SCNotification *notifyCode)
+extern "C" __declspec(dllexport) void beNotified(SCNotification * notifyCode)
 {
-	switch (notifyCode->nmhdr.code) 
+	int sci_bufferId = 0;
+	int record_index = 0;
+	sci_bufferId = notifyCode->nmhdr.idFrom;
+
+	switch (notifyCode->nmhdr.code)
 	{
+		case NPPN_FILEOPENED:
+		{
+			if (sci_bufferId == bigfiles_config->ConfFileBufferID) {
+				bigfiles_config->ConfFileBufferID = 0;
+			}
+		}
+		break;
+
 		case NPPN_SHUTDOWN:
 		{
 			commandMenuCleanUp();
@@ -85,21 +98,29 @@ extern "C" __declspec(dllexport) void beNotified(SCNotification *notifyCode)
 			commandRegToolbarIcons();
 		}
 		break;
-		
+
 		case NPPN_FILECLOSED:
 		{
 			//When the FileClosed event happens, the Scintilla Buffer gets closed.
 			// BigFiles needs to remove the reference to the buffer ID.
-			closeBufferID3((int)notifyCode->nmhdr.idFrom);
-			
+			closeBufferID3(sci_bufferId);
 		}
 		break;
 		
+		case NPPN_FILESAVED:
+		{
+			if (sci_bufferId == bigfiles_config->ConfFileBufferID) {
+				msgBox_int(TEXT("Reloading Configuration"), sci_bufferId);
+				bigfiles_config->loadConfFile();
+			}
+		}
+		break;
+
 		case NPPN_BUFFERACTIVATED:
 		{
 			// This happens when a Scintilla Buffer tab has been activated
 			// Update the current buffer reference in the BigFiles structure
-			int record_index = getBigFileRecordIndex3((int)notifyCode->nmhdr.idFrom);
+			record_index = getBigFileRecordIndex3(sci_bufferId);
 			if (record_index >= 0)
 				updateStatusBar3(&ftv[record_index]);
 			

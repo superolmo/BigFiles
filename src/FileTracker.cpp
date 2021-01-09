@@ -147,7 +147,7 @@ void FileTracker::updateBuffer(bool first_time_call)
 // Function open the filename specified by wchar_t filename_temp[500]
 // Inputs : VOID
 // Returns: VOID
-void FileTracker::openBigFile(wchar_t filename_temp[], Configuration& bigfiles_config)
+void FileTracker::openBigFile(const wchar_t filename_temp[], Configuration& bigfiles_config)
 {
 
 	//Copy the filename from filename_temp to system of records new index

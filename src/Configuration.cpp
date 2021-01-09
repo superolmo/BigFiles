@@ -5,7 +5,7 @@ Configuration::Configuration(NppData nppData) {
 	this->_getPluginDirectory(nppData);
 
 	//Load config file
-	this->loadConfFile(nppData);
+	this->loadConfFile();
 }
 
 void Configuration::_getPluginDirectory(NppData nppData) {
@@ -13,8 +13,8 @@ void Configuration::_getPluginDirectory(NppData nppData) {
 	//TCHAR confFolder[1000];
 	TCHAR confDir[MAX_PATH];
 	::SendMessage(nppData._nppHandle, NPPM_GETPLUGINSCONFIGDIR, MAX_PATH, (LPARAM)confDir);
-	//wcsncpy(confFolder, confDir, MAX_PATH);
-	confFileNameFull = std::wstring(confDir) + L"\\bigfile.conf";
+	confFilePath = std::wstring(confDir);
+	confFileNameFull = confFilePath + L"\\bigfile.conf";
 }
 
 int Configuration::get_default_page_size_bytes() {
@@ -22,6 +22,9 @@ int Configuration::get_default_page_size_bytes() {
 };
 bool Configuration::get_default_isAdmin_warnings() {
 	return this->default_isAdmin_warnings;
+};
+bool Configuration::get_default_BinaryFileType_warnings() {
+	return this->default_BinaryFileType_warnings;
 };
 
 /***********************************************************************************
@@ -41,23 +44,32 @@ void Configuration::_getCmdsFromConf(const TCHAR* confPath)
 	if (*pFn && wcscmp(pFn, TEXT("BigFiles")) == 0)
 	{
 		int val = 0;
-		val = GetPrivateProfileInt(pFn, TEXT("page_size_bytes"), 0, confPath);
+
+		// Get page_size_bytes
+		val = GetPrivateProfileInt(pFn, TEXT("page_size_bytes"), 0, confPath);	//TODO: If not found, it will return 0 right now, is this right?
 		if (val != 0)
 			this->default_page_size_bytes = val;
-		val = GetPrivateProfileInt(pFn, TEXT("isAdmin_warnings"), 0, confPath);
+		
+		// Get isAdmin_warnings
+		val = GetPrivateProfileInt(pFn, TEXT("isAdmin_warnings"), 0, confPath);	//TODO: If not found, it will return 0 right now, is this right?
 		this->default_isAdmin_warnings = val != 0;
+
+		// Get BinaryFileType_warnings
+		val = GetPrivateProfileInt(pFn, TEXT("BinaryFileType_warnings"), 0, confPath);	//TODO: If not found, it will return 0 right now, is this right?
+		this->default_BinaryFileType_warnings = val != 0;
 	}
 	else {
 		::MessageBox(NULL, TEXT("Configuration not found"), TEXT("BigFiles Plugin - Configuration::_getCmdsFromConf"), MB_OK);
 	}
 }
-void Configuration::loadConfFile(NppData nppData)
+void Configuration::loadConfFile()
 {
 
 	const char confContent[] = "\
 [BigFiles]\n\
 page_size_bytes=100000\n\
 isAdmin_warnings=1\n\
+BinaryFileType_warnings=1\n\
 \n";
 
 	//Get the fully qualified name of the config file, function saves it in confFileNameFull
@@ -81,12 +93,13 @@ isAdmin_warnings=1\n\
 	//Get values from configuration file
 	_getCmdsFromConf(confFileNameFull.c_str());
 }
+
 void Configuration::editConf(NppData nppData)
 {
 	//IDM_FILE_OPEN
 	if (!::PathFileExists(confFileNameFull.c_str()))
 	{
-		loadConfFile(nppData);
+		loadConfFile();
 	}
 	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)confFileNameFull.c_str());
 }

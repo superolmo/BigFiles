@@ -58,7 +58,7 @@ public:
 	FileTracker(HWND npp_handle, HWND scintilla_handle);
 
 	// Open a Bigfile
-	void openBigFile(wchar_t[], Configuration&);
+	void openBigFile(const wchar_t[], Configuration&);
 
 	// Move backward in the file (page--)
 	bool move_backward();
