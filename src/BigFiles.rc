@@ -2,9 +2,8 @@
 //
 #pragma code_page(65001)
 
+#include "windows.h"
 #include "resource.h"
-#include <windows.h>
-
 /////////////////////////////////////////////////////////////////////////////
 // English (United States) resources
 
@@ -17,8 +16,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,1,2,0
- PRODUCTVERSION 0,1,2,0
+ FILEVERSION 0,1,3,0
+ PRODUCTVERSION 0,1,3,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -35,12 +34,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Claudio Olmi"
             VALUE "FileDescription", "BigFiles Plugin for Notepad++ to read very large files"
-            VALUE "FileVersion", "0.1.2.0"
+            VALUE "FileVersion", "0.1.3.0"
             VALUE "InternalName", "BigFiles.dll"
             VALUE "LegalCopyright", "Copyright 2020 by Claudio Olmi"
             VALUE "OriginalFilename", "BigFiles.dll"
             VALUE "ProductName", "BigFiles Plugin"
-            VALUE "ProductVersion", "0.1.2.0"
+            VALUE "ProductVersion", "0.1.3.0"
         END
     END
     BLOCK "VarFileInfo"
