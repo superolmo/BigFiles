@@ -25,11 +25,15 @@ At this point it should be installed in Notepad++ plugin subfolder.
 
 # Structure
 The plugin is developed based on the Plugin template from Don Ho at https://github.com/npp-plugins/plugintemplate
-Big files are read using a small 100kB per page. No files are kept open. An internal structure keeps track of page number for every file opened by the plugin.
+Big files are read using a small customizable 100kB per page. No files are kept open. An internal structure keeps track of page number for every file opened by the plugin.
 
 # Minimum Scope of Work
 1. Plugin must be able to preview very large files in Notepad++ independent of the language (Multi-Byte)
 2. Plugin must be able to move viewable page changing page backward or forward, and to jump to start or end
+
+# Current Version Change Log
+- Fixed Error on closing bug
+- Fixed reloading of updated configuration without restarting Notepad++
 
 # Future Work v0.2.0.0
 - Add settings dialog and bigfiles.ini for changing page size
