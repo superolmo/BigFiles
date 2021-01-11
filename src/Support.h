@@ -11,5 +11,6 @@ Used for:
 
 void msgBox(wchar_t*);
 void msgBox_int(wchar_t* str, int v);
+void msgBox_hex(wchar_t* str, int v);
 
 

@@ -2,7 +2,7 @@
 //
 #pragma code_page(65001)
 
-#include <windows.h>
+#include "windows.h"
 #include "resource.h"
 /////////////////////////////////////////////////////////////////////////////
 // English (United States) resources
@@ -16,8 +16,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,1,2,0
- PRODUCTVERSION 0,1,2,0
+ FILEVERSION 0,1,3,0
+ PRODUCTVERSION 0,1,3,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -34,12 +34,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Claudio Olmi"
             VALUE "FileDescription", "BigFiles Plugin for Notepad++ to read very large files"
-            VALUE "FileVersion", "0.1.2.0"
+            VALUE "FileVersion", "0.1.3.0"
             VALUE "InternalName", "BigFiles.dll"
             VALUE "LegalCopyright", "Copyright 2020 by Claudio Olmi"
             VALUE "OriginalFilename", "BigFiles.dll"
             VALUE "ProductName", "BigFiles Plugin"
-            VALUE "ProductVersion", "0.1.2.0"
+            VALUE "ProductVersion", "0.1.3.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -107,6 +107,18 @@ BEGIN
     PUSHBUTTON      "Cancel",IDC_BUTTON2,137,102,68,21
 END
 
+IDD_FORMVIEW1 DIALOGEX 0, 0, 185, 119
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    LTEXT           "Bytes per Page",IDC_STATIC,17,19,53,8
+    EDITTEXT        IDC_EDIT1,71,17,81,14,ES_AUTOHSCROLL | ES_NUMBER,WS_EX_DLGMODALFRAME
+    CONTROL         "Warn if running Notepad++ as Admin",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,39,141,15
+    CONTROL         "Warn of non-text file format",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,56,138,17
+    PUSHBUTTON      "Save",IDC_BUTTON1,19,86,61,19
+    PUSHBUTTON      "Cancel",IDC_BUTTON2,101,86,61,19
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -123,6 +135,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 147
     END
+
+    IDD_FORMVIEW1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 178
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 112
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -133,6 +153,11 @@ END
 //
 
 IDD_FORMVIEW AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_FORMVIEW1 AFX_DIALOG_LAYOUT
 BEGIN
     0
 END

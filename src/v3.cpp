@@ -8,7 +8,8 @@ void move_to_start3();
 void move_to_end3();
 void move_forward3();
 void move_backward3();
-void openBigFile3();
+void openBigFile3(const wchar_t filename[]);
+void openBigFileDlg3();
 void cleanupv3();
 
 std::vector<FileTracker> ftv;
@@ -20,10 +21,11 @@ extern Configuration* bigfiles_config;
 extern wchar_t filename_temp[500];
 
 void cleanupv3() {
-	delete[] & ftv;
+	// Delete will be used in the future when I move from static to dynamic allocation of ftv vector
+	//delete[] & ftv;
 }
 
-void openBigFile3() {
+void openBigFileDlg3() {
 	//If system of records holds 9 records, do not open another one
 	// TODO: Is the limit set to 9 records meaningless?
 	if (ft_length == 9) {
@@ -41,28 +43,33 @@ void openBigFile3() {
 	// Get the file name from the Windows Dialog Box
 	if (getFileName()) {
 
-		// Get the current scintilla
-		int which = -1;
-		::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&which);
-		if (which == -1)
-			return;
-		HWND curScintilla = (which == 0) ? nppData._scintillaMainHandle : nppData._scintillaSecondHandle;
+		openBigFile3(filename_temp);
+	}
+}
 
-		FileTracker* ft1 = new FileTracker(nppData._nppHandle, curScintilla);
-		ft1->openBigFile(filename_temp, *bigfiles_config);
-		ft1->updateBuffer();
-		
-		updateStatusBar3(ft1);
+void openBigFile3(const wchar_t filename[]) {
 
-		ftv.push_back(*ft1);
+	// Get the current scintilla
+	int which = -1;
+	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&which);
+	if (which == -1)
+		return;
+	HWND curScintilla = (which == 0) ? nppData._scintillaMainHandle : nppData._scintillaSecondHandle;
+
+	FileTracker* ft1 = new FileTracker(nppData._nppHandle, curScintilla);
+	ft1->openBigFile(filename, *bigfiles_config);
+	ft1->updateBuffer(true);
 		
-		// check file type
-		if (ft1->binarySignatureName != NULL) {
-			::MessageBox(NULL, ft1->binarySignatureName->c_str(), TEXT(PLUGIN_DEFAULT_MESSAGEBOX_TITLE), MB_OK);
-		}
-		else {
-			// i don't recognise the file
-		}
+	updateStatusBar3(ft1);
+
+	ftv.push_back(*ft1);
+		
+	// check file type
+	if (ft1->binarySignatureName != NULL) {
+		::MessageBox(NULL, ft1->binarySignatureName->c_str(), TEXT(PLUGIN_DEFAULT_MESSAGEBOX_TITLE), MB_OK);
+	}
+	else {
+		// i don't recognise the file
 	}
 }
 
@@ -71,7 +78,7 @@ void move_backward3() {
 	int i = getBigFileRecordIndex3((int)::SendMessage(nppData._nppHandle, NPPM_GETCURRENTBUFFERID, 0, 0));
 	if (i != -1) {
 		if (ftv[i].move_backward()) {
-			ftv[i].updateBuffer();
+			ftv[i].updateBuffer(false);
 			updateStatusBar3(&ftv[i]);
 		}
 		else {
@@ -86,7 +93,7 @@ void move_forward3() {
 	int i = getBigFileRecordIndex3((int)::SendMessage(nppData._nppHandle, NPPM_GETCURRENTBUFFERID, 0, 0));
 	if (i != -1) {
 		if (ftv[i].move_forward()) {
-			ftv[i].updateBuffer();
+			ftv[i].updateBuffer(false);
 			updateStatusBar3(&ftv[i]);
 		}
 		else {
@@ -102,7 +109,7 @@ void move_to_start3() {
 	int i = getBigFileRecordIndex3((int)::SendMessage(nppData._nppHandle, NPPM_GETCURRENTBUFFERID, 0, 0));
 	if (i != -1) {
 		if (ftv[i].move_to_start()) {
-			ftv[i].updateBuffer();
+			ftv[i].updateBuffer(false);
 			updateStatusBar3(&ftv[i]);
 		}
 		// Move Scintilla to first character
@@ -115,7 +122,7 @@ void move_to_end3() {
 	int i = getBigFileRecordIndex3((int)::SendMessage(nppData._nppHandle, NPPM_GETCURRENTBUFFERID, 0, 0));
 	if (i != -1) {
 		if (ftv[i].move_to_end()) {
-			ftv[i].updateBuffer();
+			ftv[i].updateBuffer(false);
 			updateStatusBar3(&ftv[i]);
 		}
 		else {

@@ -54,25 +54,30 @@ extern void move_to_start3();
 extern void move_to_end3();
 extern void move_forward3();
 extern void move_backward3();
-extern void openBigFile3();
+extern void openBigFile3(const wchar_t filename[]);
+extern void openBigFileDlg3();
 extern void cleanupv3();
 
 extern int ft_length;
 
 extern std::vector<FileTracker> ftv;
 
+HANDLE global_npp_handle;
+
 //--------- START LOADING AND UNLOADING FUNCTIONS ----------------
 
 //
 // Initialize your plugin data here
 // It will be called while plugin loading   
-void pluginInit(HANDLE global_npp_handle /*hModule*/)
+void pluginInit(HANDLE g_npp_handle /*hModule*/)
 {
-	left_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)global_npp_handle, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
-	right_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)global_npp_handle,MAKEINTRESOURCE(IDB_BITMAP2), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
-	open_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)global_npp_handle, MAKEINTRESOURCE(IDB_BITMAP3), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
-	start_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)global_npp_handle, MAKEINTRESOURCE(IDB_BITMAP5), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
-	end_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)global_npp_handle, MAKEINTRESOURCE(IDB_BITMAP4), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
+	global_npp_handle = g_npp_handle;
+
+	left_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)g_npp_handle, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
+	right_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)g_npp_handle,MAKEINTRESOURCE(IDB_BITMAP2), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
+	open_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)g_npp_handle, MAKEINTRESOURCE(IDB_BITMAP3), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
+	start_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)g_npp_handle, MAKEINTRESOURCE(IDB_BITMAP5), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
+	end_icon->hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)g_npp_handle, MAKEINTRESOURCE(IDB_BITMAP4), IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE | LR_LOADMAP3DCOLORS));
 
 	//This section below can go to command menu init and get modified by configuration file
 	AltLeftKey->_isAlt = true;
@@ -106,8 +111,8 @@ void pluginInit(HANDLE global_npp_handle /*hModule*/)
 void pluginCleanUp()
 {
 	// This happens when Notepad++ close the main window
-	delete AltLeftKey, AltRightKey, AltUpKey, AltDownKey;
-	delete [] &bigfile;
+	delete bigfiles_config;
+	cleanupv3();
 }
 
 //
@@ -127,7 +132,7 @@ void commandMenuInit()
     //            bool check0nInit                // optional. Make this menu item be checked visually
     //            );
 
-	setCommand(0, TEXT("Open BigFile"), openBigFile3, NULL, false);
+	setCommand(0, TEXT("Open BigFile"), openBigFileDlg3, NULL, false);
 	setCommand(1, TEXT("Backward"), move_backward3, AltLeftKey, false);
 	setCommand(2, TEXT("Forward"), move_forward3, AltRightKey, false);
 
@@ -148,12 +153,41 @@ void commandMenuInit()
 
 	//Get configuration
 	bigfiles_config = new Configuration(nppData);
+	
+}
+
+INT_PTR CALLBACK ConfigurationDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
+{
+	switch (Message)
+	{
+	case WM_INITDIALOG:
+
+		return TRUE;
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDOK:
+			EndDialog(hwnd, IDOK);
+			break;
+		case IDCANCEL:
+			EndDialog(hwnd, IDCANCEL);
+			break;
+		}
+		break;
+	default:
+		return FALSE;
+	}
+	return TRUE;
 }
 
 // Function tells NOTEPAD++ to open the configuration file
 void openConfigFile()
 {
+	// TODO: Add a save function hook to know when Notepad++ saves the file?
+	// or just implement my own dialog box.
 	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM) bigfiles_config->confFileNameFull.c_str());
+	Sleep(500);
+	bigfiles_config->ConfFileBufferID = (int)::SendMessage(nppData._nppHandle, NPPM_GETCURRENTBUFFERID, 0, 0);
 }
 
 //
@@ -165,6 +199,7 @@ void commandMenuCleanUp()
 
 	// Don't forget to deallocate your shortcut here
 	delete AltLeftKey, AltRightKey, AltDownKey, AltUpKey;
+	delete left_icon, right_icon, open_icon, start_icon, end_icon;
 }
 
 // Register Toolbar Icons

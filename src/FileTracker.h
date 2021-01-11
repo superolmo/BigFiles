@@ -22,12 +22,16 @@ Used for:
 */
 #include <strsafe.h>
 
+#define MAX_SIGNATURE_BYTES 10
+
 #include "libmagic_alike.h"
 
 class FileTracker {
 
 public:
-	bool get_file_stats();
+	bool get_file_stats(bool first_time_call);
+
+	// File properties
 	wchar_t filename[500];
 	size_t filename_size = 500 * sizeof(wchar_t);
 
@@ -43,7 +47,7 @@ public:
 	wchar_t filetype_name[20];
 
 	// Binary Signature
-	char binarySignature[5];
+	char binarySignature[MAX_SIGNATURE_BYTES];
 	std::wstring *binarySignatureName;
 
 	// Handles to communicate with Scintilla and NPP
@@ -54,7 +58,7 @@ public:
 	FileTracker(HWND npp_handle, HWND scintilla_handle);
 
 	// Open a Bigfile
-	void openBigFile(wchar_t[], Configuration&);
+	void openBigFile(const wchar_t[], Configuration&);
 
 	// Move backward in the file (page--)
 	bool move_backward();
@@ -65,6 +69,7 @@ public:
 	// Move to the start of the file
 	bool move_to_start();
 
-	void updateBuffer();
+	void updateBuffer(bool first_time_call);
 
+	unsigned int find_EndOfLine(const std::string data);
 };
