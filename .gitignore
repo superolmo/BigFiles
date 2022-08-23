@@ -26,3 +26,6 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
+# cmake
+
+build*/
