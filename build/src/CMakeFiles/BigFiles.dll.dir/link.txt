@@ -1,3 +1,0 @@
-/usr/bin/cmake -E remove -f CMakeFiles/BigFiles.dll.dir/objects.a
-/usr/bin/x86_64-w64-mingw32-ar cr CMakeFiles/BigFiles.dll.dir/objects.a @CMakeFiles/BigFiles.dll.dir/objects1.rsp
-/usr/bin/x86_64-w64-mingw32-g++   -std=c++17  -Wno-conversion-null -gstabs -mwindows -mtune=generic -DBUILD_DLL -O1 -std=c++17  -Wno-conversion-null -gstabs -mwindows -mtune=generic -DBUILD_DLL -O1 -Wl,--add-stdcall-alias -static -static-libgcc -static-libstdc++ -s -os  -shared -o ../lib/64bit/BigFiles.dll -Wl,--out-implib,../lib/64bit/libBigFiles.dll.dll.a -Wl,--major-image-version,0,--minor-image-version,0 -Wl,--whole-archive CMakeFiles/BigFiles.dll.dir/objects.a -Wl,--no-whole-archive @CMakeFiles/BigFiles.dll.dir/linklibs.rsp
