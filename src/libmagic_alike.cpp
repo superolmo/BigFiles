@@ -98,36 +98,38 @@ void libmagic_initialize() {
 
 	//Load File Types
 	memset(temp_pattern, 0x00, 20);
-	sprintf(temp_pattern, "%c%c%c%c", 0x50,0x4B,0x03,0x04 );
-	file_types[i].name = TEXT("ZIP");
+	/* StringCbPrintfA(STRSAFE_LPSTR temp_pattern,) */
+	snprintf(temp_pattern, 4, "%c%c%c%c", 0x50,0x4B,0x03,0x04 );
+	
+	file_types[i].name = L"ZIP";
 	file_types[i].pattern_length = 4;
 	file_types[i].str_pattern = temp_pattern;
 
 	i++;
 	memset(temp_pattern, 0x00, 20);
-	sprintf(temp_pattern, "%c%c%c%c%c", 0x25, 0x50, 0x44, 0x46, 0x2D);
-	file_types[i].name = TEXT("PDF");
+	snprintf(temp_pattern, 5, "%c%c%c%c%c", 0x25, 0x50, 0x44, 0x46, 0x2D);
+	file_types[i].name = L"PDF";
 	file_types[i].pattern_length = 5;
 	file_types[i].str_pattern = temp_pattern;
 
 	i++;
 	memset(temp_pattern, 0x00, 20);
-	sprintf(temp_pattern, "%c%c", 0x4D, 0x5A);
-	file_types[i].name = TEXT("Executable");
+	snprintf(temp_pattern, 2, "%c%c", 0x4D, 0x5A);
+	file_types[i].name = L"Executable";
 	file_types[i].pattern_length = 2;
 	file_types[i].str_pattern = temp_pattern;
 
 	i++;
 	memset(temp_pattern, 0x00, 20);
-	sprintf(temp_pattern, "%c%c%c%c", 0x00, 0x00, 0x00, 0x18);
-	file_types[i].name = TEXT("Video");
+	snprintf(temp_pattern, 4, "%c%c%c%c", 0x00, 0x00, 0x00, 0x18);
+	file_types[i].name = L"Video";
 	file_types[i].pattern_length = 4;
 	file_types[i].str_pattern = temp_pattern;
 
 	i++;
 	memset(temp_pattern, 0x00, 20);
-	sprintf(temp_pattern, "%c%c%c", 0xFF, 0xD8, 0xFF);
-	file_types[i].name = TEXT("JPG Image");
+	snprintf(temp_pattern, 3, "%c%c%c", 0xFF, 0xD8, 0xFF);
+	file_types[i].name = L"JPG Image";
 	file_types[i].pattern_length = 3;
 	file_types[i].str_pattern = temp_pattern;
 

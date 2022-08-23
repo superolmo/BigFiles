@@ -64,7 +64,8 @@ void Configuration::_getCmdsFromConf(const TCHAR* confPath)
 }
 void Configuration::loadConfFile()
 {
-
+	/* This should probably be a wchar_t ?
+	If yes, std::wofstream below */
 	const char confContent[] = "\
 [BigFiles]\n\
 page_size_bytes=100000\n\
@@ -76,12 +77,12 @@ BinaryFileType_warnings=1\n\
 	//_getPluginDirectory(nppData);
 
 	// If the file does not exist, save default values
-	if (!::PathFileExists(confFileNameFull.c_str()))
+	if (!PathFileExistsW(confFileNameFull.c_str()))
 	{
 		wsprintf(strMessage, TEXT("%s%s"), TEXT("First time usage. Writing new BigFile config file to "), confFileNameFull.c_str());
 		::MessageBox(NULL, strMessage, TEXT("BigFiles Plugin - loadConfFile"), MB_OK);
 		//Write default configuration file
-		std::ofstream confFile(confFileNameFull);
+		std::ofstream confFile(confFileNameFull.c_str());
 		if (confFile)
 			confFile << confContent;
 		else
@@ -97,7 +98,7 @@ BinaryFileType_warnings=1\n\
 void Configuration::editConf(NppData nppData)
 {
 	//IDM_FILE_OPEN
-	if (!::PathFileExists(confFileNameFull.c_str()))
+	if (!PathFileExistsW(confFileNameFull.c_str()))
 	{
 		loadConfFile();
 	}

@@ -28,7 +28,7 @@ bool FileTracker::get_file_stats(bool first_time_call = false) {
 	mybigfile_size.seekg(0, mybigfile_size.beg);
 	//Compute number of pages based on page size
 	page_num_calc = (long double)this->file_size_bytes / (long double)this->page_size_bytes;
-	this->page_num_max = (int)std::floorl(page_num_calc) + 1;
+	this->page_num_max = (int)std::floor(page_num_calc) + 1;
 
 	if (first_time_call) {
 

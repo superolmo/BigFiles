@@ -16,6 +16,7 @@
 //Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "PluginDefinition.h"
+#include "Support.h"
 
 extern FuncItem funcItem[nbFunc];
 extern NppData nppData;
@@ -27,27 +28,29 @@ extern Configuration* bigfiles_config;
 
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD  reasonForCall, LPVOID /*lpReserved*/)
 {
+	try {
+		switch (reasonForCall)
+		{
+		case DLL_PROCESS_ATTACH:
+			pluginInit(hModule);
+		
+			break;
 
-	switch (reasonForCall)
-	{
-	case DLL_PROCESS_ATTACH:
-		pluginInit(hModule);
-	
-		break;
+		case DLL_PROCESS_DETACH:
+			pluginCleanUp();
 
-	case DLL_PROCESS_DETACH:
-		pluginCleanUp();
+			break;
 
-		break;
+		case DLL_THREAD_ATTACH:
 
-	case DLL_THREAD_ATTACH:
+			break;
 
-		break;
+		case DLL_THREAD_DETACH:
 
-	case DLL_THREAD_DETACH:
-
-		break;
+			break;
+		}
 	}
+	catch (...) { return FALSE; }
 
 	return TRUE;
 }

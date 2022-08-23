@@ -45,3 +45,10 @@ Big files are read using a small customizable 100kB per page. No files are kept 
 ## Helping URLs
 - https://notepad-plus-plus.org/community/category/5/plugin-development
 - https://github.com/npp-plugins/plugintemplate
+
+
+## MINGW and CMAKE URLs
+- https://github.com/diegocr/mingw-nppskeleton/blob/master/makefile
+- https://github.com/notepad-plus-plus/notepad-plus-plus/blob/master/PowerEditor/gcc/makefile
+- https://github.com/jimhester/stonesense/blob/master/CMakeLists.txt
+- https://github.com/Kitware/CMake/blob/master/Modules/CMakeDetermineRCCompiler.cmake

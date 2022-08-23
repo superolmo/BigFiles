@@ -18,6 +18,19 @@
 #include "PluginDefinition.h"
 #include "menuCmdID.h"
 
+/*
+Used for opening the Open File Dialog
+Functions used:
+	IFileOpenDialog
+	IID_IFileOpenDialog
+	CLSID_FileOpenDialog
+	IShellItem
+	SIGDN_FILESYSPATH
+*/
+#include <shobjidl.h> 
+
+#include "Configuration.h"
+
 //
 // The plugin data that Notepad++ needs
 //
@@ -29,11 +42,11 @@ FuncItem funcItem[nbFunc];
 NppData nppData;
 
 // Define the Icon Resources for the Toolbar
-toolbarIcons* left_icon = new toolbarIcons;
-toolbarIcons* right_icon = new toolbarIcons;
-toolbarIcons* open_icon = new toolbarIcons;
-toolbarIcons* start_icon = new toolbarIcons;
-toolbarIcons* end_icon = new toolbarIcons;
+toolbarIconsWithDarkMode* left_icon = new toolbarIconsWithDarkMode;
+toolbarIconsWithDarkMode* right_icon = new toolbarIconsWithDarkMode;
+toolbarIconsWithDarkMode* open_icon = new toolbarIconsWithDarkMode;
+toolbarIconsWithDarkMode* start_icon = new toolbarIconsWithDarkMode;
+toolbarIconsWithDarkMode* end_icon = new toolbarIconsWithDarkMode;
 
 // Define the global variables for this plugin
 bigfile_struct bigfile[10];
@@ -207,19 +220,19 @@ void commandRegToolbarIcons() {
 	//Add icons in the toolbar
 
 	// Start
-	::SendMessage(nppData._nppHandle, NPPM_ADDTOOLBARICON, (WPARAM)funcItem[3]._cmdID, (LPARAM)(start_icon));
+	::SendMessage(nppData._nppHandle, NPPM_ADDTOOLBARICON_FORDARKMODE, (WPARAM)funcItem[3]._cmdID, (LPARAM)(start_icon));
 
 	// Left
-	::SendMessage(nppData._nppHandle, NPPM_ADDTOOLBARICON, (WPARAM)funcItem[1]._cmdID, (LPARAM)(left_icon));
+	::SendMessage(nppData._nppHandle, NPPM_ADDTOOLBARICON_FORDARKMODE, (WPARAM)funcItem[1]._cmdID, (LPARAM)(left_icon));
 
 	// Open
-	::SendMessage(nppData._nppHandle, NPPM_ADDTOOLBARICON, (WPARAM)funcItem[0]._cmdID, (LPARAM)(open_icon));
+	::SendMessage(nppData._nppHandle, NPPM_ADDTOOLBARICON_FORDARKMODE, (WPARAM)funcItem[0]._cmdID, (LPARAM)(open_icon));
 
 	// Right
-	::SendMessage(nppData._nppHandle, NPPM_ADDTOOLBARICON, (WPARAM)funcItem[2]._cmdID, (LPARAM)(right_icon));
+	::SendMessage(nppData._nppHandle, NPPM_ADDTOOLBARICON_FORDARKMODE, (WPARAM)funcItem[2]._cmdID, (LPARAM)(right_icon));
 
 	//End
-	::SendMessage(nppData._nppHandle, NPPM_ADDTOOLBARICON, (WPARAM)funcItem[4]._cmdID, (LPARAM)(end_icon));
+	::SendMessage(nppData._nppHandle, NPPM_ADDTOOLBARICON_FORDARKMODE, (WPARAM)funcItem[4]._cmdID, (LPARAM)(end_icon));
 };
 
 //
@@ -232,8 +245,7 @@ bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey 
 
     if (!pFunc)
         return false;
-
-    lstrcpy(funcItem[index]._itemName, cmdName);
+	StringCbCopy(funcItem[index]._itemName, 64, cmdName);
     funcItem[index]._pFunc = pFunc;
     funcItem[index]._init2Check = check0nInit;
     funcItem[index]._pShKey = sk;
@@ -257,13 +269,14 @@ int getFileName()
 
 	if (SUCCEEDED(hr))
 	{
-		IFileOpenDialog *pFileOpen;
+		IFileOpenDialog *pFileOpen = NULL;
 		// Create the FileOpenDialog object.
 		hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
 			IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
 
 		if (SUCCEEDED(hr))
 		{
+			
 			// Show the Open dialog box.
 			hr = pFileOpen->Show(NULL);
 
