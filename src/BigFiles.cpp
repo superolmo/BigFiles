@@ -26,31 +26,38 @@ extern int getBigFileRecordIndex3(int buffer_id);
 extern std::vector<FileTracker> ftv;
 extern Configuration* bigfiles_config;
 
-BOOL APIENTRY DllMain(HANDLE hModule, DWORD  reasonForCall, LPVOID /*lpReserved*/)
+BOOL APIENTRY DllMain(
+	HANDLE hModule,			// DLL handle
+	DWORD  reasonForCall, 	// reason for calling function
+	LPVOID /*lpReserved*/)
 {
-	try {
-		switch (reasonForCall)
-		{
-		case DLL_PROCESS_ATTACH:
+
+	switch (reasonForCall)
+	{
+	case DLL_PROCESS_ATTACH:
+		try {
 			pluginInit(hModule);
-		
-			break;
-
-		case DLL_PROCESS_DETACH:
-			pluginCleanUp();
-
-			break;
-
-		case DLL_THREAD_ATTACH:
-
-			break;
-
-		case DLL_THREAD_DETACH:
-
-			break;
 		}
+		catch (...) { return FALSE; }
+	
+		break;
+
+	case DLL_PROCESS_DETACH:
+		try {
+			pluginCleanUp();
+		}
+		catch (...) { return FALSE; }
+
+		break;
+
+	case DLL_THREAD_ATTACH:
+
+		break;
+
+	case DLL_THREAD_DETACH:
+
+		break;
 	}
-	catch (...) { return FALSE; }
 
 	return TRUE;
 }
