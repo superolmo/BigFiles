@@ -79,15 +79,15 @@ END
 // Bitmap
 //
 
-IDB_BITMAP1             BITMAP                  "back.bmp"
+IDB_BITMAP1             BITMAP                  "back.png"
 
-IDB_BITMAP2             BITMAP                  "forward.bmp"
+IDB_BITMAP2             BITMAP                  "forward.png"
 
-IDB_BITMAP3             BITMAP                  "open.bmp"
+IDB_BITMAP3             BITMAP                  "open.png"
 
-IDB_BITMAP4             BITMAP                  "down.bmp"
+IDB_BITMAP4             BITMAP                  "down.png"
 
-IDB_BITMAP5             BITMAP                  "up.bmp"
+IDB_BITMAP5             BITMAP                  "up.png"
 
 
 /////////////////////////////////////////////////////////////////////////////
