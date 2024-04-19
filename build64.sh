@@ -1,8 +1,9 @@
 #!/bin/bash
 
 rm -rf build
-cmake -S . -B build
+cmake -S . -B build --toolchain cmake/toolchain-cross-mingw64-linux.cmake
 cmake --build build
+
 rm build/lib/64bit/libBigFiles.dll.dll.a
 zip build/lib/64bit/BigFiles.zip build/lib/64bit/*
 
