@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake/Modules)
 
@@ -35,8 +35,12 @@ else()
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/64bit)
 endif()
 
+file(GLOB HEADER_LIST CONFIGURE_DEPENDS "${BigFiles_SOURCE_DIR}/include/*.h")
+
 # add the executable
-add_library(${PROJECT_NAME}.dll SHARED ${BigFiles_SRC})
+add_library(${PROJECT_NAME} SHARED ${BigFiles_SRC} ${HEADER_LIST})
+
+set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".dll")
 
 add_definitions(-D_WINDOWS 
                 -D_USRDLL 
@@ -51,16 +55,16 @@ add_definitions(-D_WINDOWS
                 -D_CRT_NON_CONFORMING_SWPRINTFS
                 )
 
-target_include_directories(${PROJECT_NAME}.dll PUBLIC 
+target_include_directories(${PROJECT_NAME} PUBLIC 
     ../include
     ${CMAKE_FIND_ROOT_PATH}
     )
 
-target_link_libraries(${PROJECT_NAME}.dll
+target_link_libraries(${PROJECT_NAME}
     shlwapi
 )
 
-set_target_properties(${PROJECT_NAME}.dll PROPERTIES
+set_target_properties(${PROJECT_NAME} PROPERTIES
         PREFIX ""
         SUFFIX ""
         LINK_FLAGS "-Wl,--add-stdcall-alias -static -static-libgcc -static-libstdc++ -s -os ${CFLAGS}"
